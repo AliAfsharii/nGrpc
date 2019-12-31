@@ -9,6 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nGrpc.ServerCommon", "nGrpc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nGrpc.DB", "nGrpc.DB\nGrpc.DB.csproj", "{2C0AF13F-7A2B-4429-AA8B-BFB94FC46740}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{51E1136C-244A-498C-AB4E-5FE112E82E97}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nGrpc.IntegrationTest", "Tests\nGrpc.IntegrationTest\nGrpc.IntegrationTest.csproj", "{B805192A-96E4-48F1-82B6-37F2B8B02577}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,9 +31,16 @@ Global
 		{2C0AF13F-7A2B-4429-AA8B-BFB94FC46740}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C0AF13F-7A2B-4429-AA8B-BFB94FC46740}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C0AF13F-7A2B-4429-AA8B-BFB94FC46740}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B805192A-96E4-48F1-82B6-37F2B8B02577}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B805192A-96E4-48F1-82B6-37F2B8B02577}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B805192A-96E4-48F1-82B6-37F2B8B02577}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B805192A-96E4-48F1-82B6-37F2B8B02577}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B805192A-96E4-48F1-82B6-37F2B8B02577} = {51E1136C-244A-498C-AB4E-5FE112E82E97}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CAA954CC-D07A-4D1E-823A-637233A8BB2E}

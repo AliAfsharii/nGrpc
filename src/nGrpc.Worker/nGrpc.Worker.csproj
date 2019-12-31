@@ -16,6 +16,4 @@
     <ProjectReference Include="..\nGrpc.ServerCommon\nGrpc.ServerCommon.csproj" />
   </ItemGroup>
 
-
-
 </Project>

@@ -41,6 +41,7 @@ namespace nGrpc.Worker
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             IServiceProvider serviceProvider = app.ApplicationServices;
+            Program.ServiceProviderForTests = serviceProvider;
 
             var logLevelConfig = serviceProvider.GetRequiredService<LogLevelConfigs>();
             SerilogUtils.AddSerilog("", logLevelConfig);
