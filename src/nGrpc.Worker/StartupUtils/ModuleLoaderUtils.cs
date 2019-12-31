@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace nGrpc.Worker.StartupUtils
 {
-    public class ModuleLoaderUtils
+    public static class ModuleLoaderUtils
     {
         public static List<string> GetAllModuleNamesFromConfigs(IConfiguration configuration)
         {

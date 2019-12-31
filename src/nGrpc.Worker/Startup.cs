@@ -24,6 +24,8 @@ namespace nGrpc.Worker
 
         public void ConfigureServices(IServiceCollection services)
         {
+            NewtonSoftUtils.ConfigNewtonToSerializeEnumToString();
+
             services.AddControllersWithViews();
 
             var allModulesNames = ModuleLoaderUtils.GetAllModuleNamesFromConfigs(Configuration);
