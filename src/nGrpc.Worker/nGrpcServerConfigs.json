@@ -1,0 +1,14 @@
+﻿{
+  "Logging": {
+    "LogLevel": {
+      "Console": "Information",
+      "Microsoft": "Information",
+      "Database": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "KestrelConfigs": {
+    "Host": "127.0.0.1",
+    "Port": 4040
+  }
+}

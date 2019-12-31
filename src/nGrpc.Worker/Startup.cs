@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using nGrpc.Worker.StartupUtils;
+using nGrpc.ServerCommon;
 
 namespace nGrpc.Worker
 {
@@ -24,13 +25,17 @@ namespace nGrpc.Worker
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+           // services.Configure<LogLevelConfig>(Configuration.GetSection("Logging:LogLevel"));
+            services.AddConfig<LogLevelConfig>(Configuration, "Logging:LogLevel");
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             IServiceProvider serviceProvider = app.ApplicationServices;
 
-            SerilogUtil.AddSerilog("", new LogLevelConfig {Console = "Information", Database = "Error", Microsoft = "Information" });
+            var logLevelConfig = serviceProvider.GetService<LogLevelConfig>();
+            SerilogUtil.AddSerilog("", logLevelConfig);
 
 
             if (env.IsDevelopment())
@@ -43,7 +48,7 @@ namespace nGrpc.Worker
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();

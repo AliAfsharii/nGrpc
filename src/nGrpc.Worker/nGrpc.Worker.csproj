@@ -11,6 +11,10 @@
     <PackageReference Include="Serilog.Sinks.PostgreSQL" Version="2.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\nGrpc.ServerCommon\nGrpc.ServerCommon.csproj" />
+  </ItemGroup>
+
 
 
 </Project>
