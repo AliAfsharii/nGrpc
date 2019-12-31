@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace nGrpc.ServerCommon
+﻿namespace nGrpc.ServerCommon
 {
     public class CommandLineArguments
     {

@@ -1,5 +1,3 @@
-using System;
-
 namespace nGrpc.Worker.Models
 {
     public class ErrorViewModel

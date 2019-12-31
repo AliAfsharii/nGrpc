@@ -7,11 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nGrpc.Worker", "nGrpc.Worke
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nGrpc.ServerCommon", "nGrpc.ServerCommon\nGrpc.ServerCommon.csproj", "{B87BE5F7-D56D-43A1-814E-E1A260B56C7D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nGrpc.DB", "nGrpc.DB\nGrpc.DB.csproj", "{2C0AF13F-7A2B-4429-AA8B-BFB94FC46740}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nGrpc.DB", "nGrpc.DB\nGrpc.DB.csproj", "{2C0AF13F-7A2B-4429-AA8B-BFB94FC46740}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{51E1136C-244A-498C-AB4E-5FE112E82E97}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nGrpc.IntegrationTest", "Tests\nGrpc.IntegrationTest\nGrpc.IntegrationTest.csproj", "{B805192A-96E4-48F1-82B6-37F2B8B02577}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nGrpc.IntegrationTest", "Tests\nGrpc.IntegrationTest\nGrpc.IntegrationTest.csproj", "{B805192A-96E4-48F1-82B6-37F2B8B02577}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nGrpc.Grpc", "nGrpc.Grpc\nGrpc.Grpc.csproj", "{61C65FC5-83B9-4EE2-B718-0BD687DE64A2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +37,10 @@ Global
 		{B805192A-96E4-48F1-82B6-37F2B8B02577}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B805192A-96E4-48F1-82B6-37F2B8B02577}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B805192A-96E4-48F1-82B6-37F2B8B02577}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61C65FC5-83B9-4EE2-B718-0BD687DE64A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61C65FC5-83B9-4EE2-B718-0BD687DE64A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61C65FC5-83B9-4EE2-B718-0BD687DE64A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61C65FC5-83B9-4EE2-B718-0BD687DE64A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

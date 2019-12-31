@@ -14,8 +14,13 @@
   "DBConfigs": {
     "ConnectionString": "Host=localhost;Port=5432;Username=postgres;Password=1;Database=nGrpcDB"
   },
+  "GrpcConfigs": {
+    "Host": "127.0.0.1",
+    "Port": 5051
+  },
   "ModuleNames": [
     "nGrpc.Worker",
-    "nGrpc.DB"
+    "nGrpc.DB",
+    "nGrpc.Grpc"
   ]
 }

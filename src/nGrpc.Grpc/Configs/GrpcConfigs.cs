@@ -1,6 +1,6 @@
-﻿namespace nGrpc.Worker
+﻿namespace nGrpc.Grpc
 {
-    public class KestrelConfigs
+    public class GrpcConfigs
     {
         public string Host { get; set; }
         public int Port { get; set; }
