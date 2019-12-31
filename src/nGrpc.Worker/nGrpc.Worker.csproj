@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\nGrpc.DB\nGrpc.DB.csproj" />
     <ProjectReference Include="..\nGrpc.ServerCommon\nGrpc.ServerCommon.csproj" />
   </ItemGroup>
 

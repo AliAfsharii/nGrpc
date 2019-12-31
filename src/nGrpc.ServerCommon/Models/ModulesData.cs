@@ -1,10 +1,7 @@
-﻿using nGrpc.ServerCommon;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace nGrpc.Worker
+namespace nGrpc.ServerCommon
 {
     public class ModulesData
     {
