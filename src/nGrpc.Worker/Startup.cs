@@ -69,7 +69,7 @@ namespace nGrpc.Worker
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            ModuleLoaderUtils.Execute_AllModuleLoaders_Initializer(serviceProvider).Wait();
+            ModuleLoaderUtils.Execute_AllModuleLoaders_Initializer(serviceProvider).GetAwaiter().GetResult();
         }
     }
 }

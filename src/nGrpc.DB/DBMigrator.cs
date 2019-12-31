@@ -91,13 +91,15 @@ namespace nGrpc.DB
         {
             public int Compare(string x, string y)
             {
-                var xs = x.Split('.');
-                string xFileName = xs.Skip(xs.Length - 4).Take(4).Aggregate((n, m) => n + "." + m);
+                var xs = x.Split('@');
+                if (xs.Length != 2)
+                    throw new BadSqlFileNameExceptions($"Sql File Name: {x}");
 
-                var ys = y.Split('.');
-                string yFileName = ys.Skip(ys.Length - 4).Take(4).Aggregate((n, m) => n + "." + m);
+                var ys = y.Split('@');
+                if (ys.Length != 2)
+                    throw new BadSqlFileNameExceptions($"Sql File Name: {x}");
 
-                return string.Compare(xFileName, yFileName);
+                return string.Compare(xs[1], ys[1]);
             }
         }
     }
