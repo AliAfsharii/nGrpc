@@ -23,7 +23,6 @@ namespace nGrpc.Worker
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
-            .UseSerilog()
             .ConfigureAppConfiguration((hostingContext, config) =>
             {
                 config
@@ -43,13 +42,9 @@ namespace nGrpc.Worker
 
                     Console.WriteLine($"Kestrel is listening on: http://{kc.Host}:{kc.Port}");
                 });
-            });
+            })
+            .UseSerilog()
+            ;
         }
-    }
-
-    public class KestrelConfigs
-    {
-        public string Host { get; set; }
-        public int Port { get; set; }
     }
 }

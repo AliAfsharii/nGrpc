@@ -10,5 +10,8 @@
   "KestrelConfigs": {
     "Host": "127.0.0.1",
     "Port": 4040
-  }
+  },
+  "ModuleNames": [
+    "nGrpc.Worker"
+  ]
 }

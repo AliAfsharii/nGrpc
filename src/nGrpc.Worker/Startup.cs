@@ -26,17 +26,25 @@ namespace nGrpc.Worker
         {
             services.AddControllersWithViews();
 
-           // services.Configure<LogLevelConfig>(Configuration.GetSection("Logging:LogLevel"));
-            services.AddConfig<LogLevelConfig>(Configuration, "Logging:LogLevel");
+            var allModulesNames = ModuleLoaderUtils.GetAllModuleNamesFromConfigs(Configuration);
+            var allModuleLoaders = ModuleLoaderUtils.Execute_AllModuleLoaders_AddServices(allModulesNames, services, Configuration);
+            var allDiServices = services.Select(n => n.ServiceType).ToList();
+
+            ModulesData modulesData = new ModulesData
+            {
+                AllModulesNames = allModulesNames,
+                AllModuleLoaders = allModuleLoaders,
+                AllDIServices = allDiServices
+            };
+            services.AddSingleton<ModulesData>(modulesData);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             IServiceProvider serviceProvider = app.ApplicationServices;
 
-            var logLevelConfig = serviceProvider.GetService<LogLevelConfig>();
-            SerilogUtil.AddSerilog("", logLevelConfig);
-
+            var logLevelConfig = serviceProvider.GetRequiredService<LogLevelConfigs>();
+            SerilogUtils.AddSerilog("", logLevelConfig);
 
             if (env.IsDevelopment())
             {
@@ -61,6 +69,8 @@ namespace nGrpc.Worker
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            ModuleLoaderUtils.Execute_AllModuleLoaders_Initializer(serviceProvider).Wait();
         }
     }
 }

@@ -10,14 +10,7 @@ using Serilog.Sinks.PostgreSQL;
 
 namespace nGrpc.Worker.StartupUtils
 {
-    public class LogLevelConfig
-    {
-        public string Console { get; set; }
-        public string Microsoft { get; set; }
-        public string Database { get; set; }
-    }
-
-    public static class SerilogUtil
+    public static class SerilogUtils
     {
         private class WriteUtcTime : TimestampColumnWriter
         {
@@ -53,7 +46,7 @@ namespace nGrpc.Worker.StartupUtils
             return parsedLevel;
         }
 
-        public static void AddSerilog(string connectionString, LogLevelConfig logLevelConfig)
+        public static void AddSerilog(string connectionString, LogLevelConfigs logLevelConfig)
         {
             IDictionary<string, ColumnWriterBase> columnWriters = new Dictionary<string, ColumnWriterBase>
             {
