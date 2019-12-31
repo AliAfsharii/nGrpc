@@ -1,2 +1,4 @@
 src/.vs/
 src/nGrpc/obj/
+src/nGrpc.Worker/bin/
+src/nGrpc.Worker/obj/
