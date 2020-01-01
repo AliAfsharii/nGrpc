@@ -3,3 +3,5 @@ src/*/bin/
 src/*/obj/
 src/Tests/nGrpc.IntegrationTest/bin/
 src/Tests/nGrpc.IntegrationTest/obj/
+src/Tests/nGrpc.UnitTests/bin/
+src/Tests/nGrpc.UnitTests/obj/
