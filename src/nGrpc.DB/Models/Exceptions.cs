@@ -2,13 +2,13 @@
 
 namespace nGrpc.DB
 {
-    public class BadSqlFileNameExceptions : Exception
+    public class BadSqlFileNameException : Exception
     {
-        public BadSqlFileNameExceptions()
+        public BadSqlFileNameException()
         {
         }
 
-        public BadSqlFileNameExceptions(string message) : base(message)
+        public BadSqlFileNameException(string message) : base(message)
         {
         }
     }

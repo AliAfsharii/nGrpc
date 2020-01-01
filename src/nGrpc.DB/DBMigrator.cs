@@ -93,11 +93,11 @@ namespace nGrpc.DB
             {
                 var xs = x.Split('@');
                 if (xs.Length != 2)
-                    throw new BadSqlFileNameExceptions($"Sql File Name: {x}");
+                    throw new BadSqlFileNameException($"Sql File Name: {x}");
 
                 var ys = y.Split('@');
                 if (ys.Length != 2)
-                    throw new BadSqlFileNameExceptions($"Sql File Name: {x}");
+                    throw new BadSqlFileNameException($"Sql File Name: {x}");
 
                 return string.Compare(xs[1], ys[1]);
             }
