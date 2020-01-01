@@ -7,7 +7,7 @@ namespace nGrpc.ServerCommon
 {
     public class TimerProvider : ITimerProvider
     {
-        public ITimer GetNewTimer()
+        public ITimer CreateTimer()
         {
             return new ServerTimer();
         }

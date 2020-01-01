@@ -1,31 +1,16 @@
 ﻿using nGrpc.ServerCommon;
-using System.Threading;
 
 namespace nGrpc.Sessions
 {
     internal class Session
     {
-        private PlayerData _playerData;
-        private readonly ITimer _timer;
-        private readonly int _timeoutInMilisec;
+        public PlayerData PlayerData { get; private set; }
+        public ITimer Timer { get; private set; }
 
-        internal Session(PlayerData playerData, ITimer timer, int timeoutInMilisec)
+        internal Session(PlayerData playerData, ITimer timer)
         {
-            _playerData = playerData;
-            _timer = timer;
-            _timeoutInMilisec = timeoutInMilisec;
-
-            ResetTimer();
-        }
-
-        internal PlayerData GetPlayerData()
-        {
-            return _playerData;
-        }
-
-        internal void ResetTimer()
-        {
-            _timer.Change(_timeoutInMilisec, Timeout.Infinite);
+            PlayerData = playerData;
+            Timer = timer;
         }
     }
 }

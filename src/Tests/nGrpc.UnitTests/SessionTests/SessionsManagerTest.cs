@@ -21,13 +21,15 @@ namespace nGrpc.UnitTests.SessionTests
         {
             _timerProvider = Substitute.For<ITimerProvider>();
             _timerMock = new TimerMock();
-            _timerProvider.GetNewTimer().Returns(_timerMock);
+            _timerProvider.CreateTimer().Returns(_timerMock);
 
             _sessionConfigs = new SessionConfigs { TimeoutInMilisec = 35312 };
 
             _sessionsManager = new SessionsManager(_timerProvider, _sessionConfigs);
             _playerData = new PlayerData { Id = _playerId, SecretKey = Guid.NewGuid() };    
         }
+
+
 
         [Fact]
         public void GIVEN_SessionsManager_WHEN_Call_AddSession_And_GetPlayerData_THEN_It_Should_Return_Clone_Of_The_Same_PlayerData()

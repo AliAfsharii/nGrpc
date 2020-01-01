@@ -6,7 +6,7 @@ namespace nGrpc.ServerCommon
 {
     public interface ITimerProvider
     {
-        ITimer GetNewTimer();
+        ITimer CreateTimer();
     }
 
     public interface ITimer
