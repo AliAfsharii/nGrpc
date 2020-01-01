@@ -1,4 +1,5 @@
 ﻿using nGrpc.ServerCommon;
+using System;
 using System.Collections.Concurrent;
 
 namespace nGrpc.Sessions
@@ -48,6 +49,14 @@ namespace nGrpc.Sessions
             if (session == null)
                 throw new ThereIsNoPlayerDataForSuchPlayerException($"PlayerId: {playerId}");
             return session.GetPlayerData().CloneByMessagePack();
+        }
+
+        public void ResetTimer(int playerId)
+        {
+            Session session = GetSession(playerId);
+            if (session == null)
+                throw new ThereIsNoPlayerDataForSuchPlayerException($"PlayerId: {playerId}");
+            session.ResetTimer();
         }
     }
 }
