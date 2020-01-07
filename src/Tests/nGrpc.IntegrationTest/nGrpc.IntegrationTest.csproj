@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\nGrpc.Worker\nGrpc.Worker.csproj" />
+    <ProjectReference Include="..\..\Services\nGrpc.ProfileService\nGrpc.ProfileService.csproj" />
   </ItemGroup>
 
 </Project>

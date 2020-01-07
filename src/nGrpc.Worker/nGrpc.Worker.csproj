@@ -12,9 +12,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\nGrpc.Common\nGrpc.Common.csproj" />
     <ProjectReference Include="..\nGrpc.DB\nGrpc.DB.csproj" />
     <ProjectReference Include="..\nGrpc.Grpc\nGrpc.Grpc.csproj" />
     <ProjectReference Include="..\nGrpc.ServerCommon\nGrpc.ServerCommon.csproj" />
+    <ProjectReference Include="..\nGrpc.Session\nGrpc.Session.csproj" />
+    <ProjectReference Include="..\Services\nGrpc.ProfileService\nGrpc.ProfileService.csproj" />
   </ItemGroup>
 
 </Project>

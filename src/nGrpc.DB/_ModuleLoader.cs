@@ -13,6 +13,7 @@ namespace nGrpc.DB
         {
             services.AddConfig<DBConfigs>(configuration, "DBConfigs");
             services.AddSingleton<IDBMigrator, DBMigrator>();
+            services.AddSingleton<IDBProvider, DBProvider>();
         }
 
         public System.Collections.Generic.List<(int priorityIndex, Func<Task> func)> Initializer(IServiceProvider serviceProvider)

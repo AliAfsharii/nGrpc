@@ -61,5 +61,11 @@ namespace nGrpc.IntegrationTest
                     IsServerRunning = true;
                 }
         }
+
+
+        public TService GetServiceFromProvider<TService>()
+        {
+            return Program.ServiceProviderForTests.GetRequiredService<TService>();
+        }
     }
 }

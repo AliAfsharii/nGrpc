@@ -10,7 +10,7 @@ namespace nGrpc.UnitTests.ProfileServiceTests
 {
     public class ProfileTest
     {
-        Profile _profile;
+        IProfile _profile;
         IProfileRepository _profileRepository;
         ISessionsManager _sessionsManager;
 
@@ -25,7 +25,7 @@ namespace nGrpc.UnitTests.ProfileServiceTests
         public async Task GIVEN_Profile_WHEN_Call_Register_THEN_It_Should_Call_ProfileRepository_Register_Once_And_Return_Its_Returned_Values()
         {
             // given
-            Profile profile = _profile;
+            IProfile profile = _profile;
             IProfileRepository profileRepository = _profileRepository;
             int expectedPlayerId = 54634;
             Guid expectedSecretKey = Guid.NewGuid();
@@ -44,7 +44,7 @@ namespace nGrpc.UnitTests.ProfileServiceTests
         public async Task GIVEN_Profie_WHEN_Call_Login_For_A_Player_Without_Active_Session_THEN_It_Should_Create_A_Session_And_Return_SessionId()
         {
             // given
-            Profile profile = _profile;
+            IProfile profile = _profile;
 
             int playerId = 23145;
             Guid secretKey = Guid.NewGuid();
@@ -74,7 +74,7 @@ namespace nGrpc.UnitTests.ProfileServiceTests
         public async Task GIVEN_Profie_WHEN_Call_Login_For_A_Player_With_Active_Session_THEN_It_Should_Return_SessionId()
         {
             // given
-            Profile profile = _profile;
+            IProfile profile = _profile;
 
             int playerId = 23145;
             Guid secretKey = Guid.NewGuid();

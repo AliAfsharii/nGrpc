@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace nGrpc.ProfileService
 {
-    public class Profile
+    public class Profile : IProfile
     {
         private readonly IProfileRepository _profileRepository;
         private readonly ISessionsManager _sessionsManager;

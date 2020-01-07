@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nGrpc.ProfileService", "Ser
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nGrpc.Common", "nGrpc.Common\nGrpc.Common.csproj", "{46EC9735-A72C-4AAF-B40F-D23D38204241}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{946148D6-1F07-4514-B168-64D10759950F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,6 +74,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{B805192A-96E4-48F1-82B6-37F2B8B02577} = {51E1136C-244A-498C-AB4E-5FE112E82E97}
 		{0FE0D8A5-A31D-4611-A357-A970F1FA2511} = {51E1136C-244A-498C-AB4E-5FE112E82E97}
+		{4D2E71CF-593C-4000-9814-008A78A60DB6} = {946148D6-1F07-4514-B168-64D10759950F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CAA954CC-D07A-4D1E-823A-637233A8BB2E}

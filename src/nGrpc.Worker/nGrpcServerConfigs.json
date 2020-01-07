@@ -18,9 +18,15 @@
     "Host": "127.0.0.1",
     "Port": 5051
   },
+  "SessionConfigs": {
+    "TimeoutInMilisec": 600000
+  },
   "ModuleNames": [
     "nGrpc.Worker",
     "nGrpc.DB",
-    "nGrpc.Grpc"
+    "nGrpc.Grpc",
+    "nGrpc.Session",
+    "nGrpc.ServerCommon",
+    "nGrpc.ProfileService"
   ]
 }
