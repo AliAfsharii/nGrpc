@@ -1,5 +1,4 @@
 ﻿using nGrpc.ServerCommon;
-using System;
 using System.Collections.Concurrent;
 using System.Threading;
 
@@ -50,7 +49,9 @@ namespace nGrpc.Sessions
             Session session = GetSession(playerId);
             if (session == null)
                 throw new ThereIsNoPlayerDataForSuchPlayerException($"PlayerId: {playerId}");
-            return session.PlayerData.CloneByMessagePack();
+
+            using (session.Lock())
+                return session.PlayerData.CloneByMessagePack();
         }
 
         public void ResetTimer(int playerId)
@@ -59,7 +60,8 @@ namespace nGrpc.Sessions
             if (session == null)
                 throw new ThereIsNoPlayerDataForSuchPlayerException($"PlayerId: {playerId}");
 
-             session.Timer.Change(_sessionConfigs.TimeoutInMilisec, Timeout.Infinite);
+            using (session.Lock())
+                session.Timer.Change(_sessionConfigs.TimeoutInMilisec, Timeout.Infinite);
         }
     }
 }
