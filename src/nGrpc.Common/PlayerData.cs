@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace nGrpc.Sessions
+namespace nGrpc.Common
 {
     public class PlayerData
     {

@@ -4,28 +4,28 @@ using Xunit;
 using nGrpc.ServerCommon;
 using NSubstitute;
 using System.Threading;
+using nGrpc.Common;
 
 namespace nGrpc.UnitTests.SessionTests
 {
     public class SessionsManagerTest
     {
         int _playerId = 389465;
-        SessionsManager _sessionsManager;
+        ISessionsManager _sessionsManager;
         PlayerData _playerData;
 
         TimerMock _timerMock;
-        ITimerProvider _timerProvider;
         SessionConfigs _sessionConfigs;
 
         public SessionsManagerTest()
         {
-            _timerProvider = Substitute.For<ITimerProvider>();
+            ITimerProvider timerProvider = Substitute.For<ITimerProvider>();
             _timerMock = new TimerMock();
-            _timerProvider.CreateTimer().Returns(_timerMock);
+            timerProvider.CreateTimer().Returns(_timerMock);
 
             _sessionConfigs = new SessionConfigs { TimeoutInMilisec = 35312 };
 
-            _sessionsManager = new SessionsManager(_timerProvider, _sessionConfigs);
+            _sessionsManager = new SessionsManager(timerProvider, _sessionConfigs);
             _playerData = new PlayerData { Id = _playerId, SecretKey = Guid.NewGuid() };    
         }
 
@@ -35,7 +35,7 @@ namespace nGrpc.UnitTests.SessionTests
         public void GIVEN_SessionsManager_WHEN_Call_AddSession_And_GetPlayerData_THEN_It_Should_Return_Clone_Of_The_Same_PlayerData()
         {
             // given
-            SessionsManager sessionsManager = _sessionsManager;
+            ISessionsManager sessionsManager = _sessionsManager;
             int playerId = _playerId;
             PlayerData playerData = _playerData;
 
@@ -52,7 +52,7 @@ namespace nGrpc.UnitTests.SessionTests
         public void GIVEN_SessionsManager_With_A_Session_WHEN_Timeout_Is_Reached_THEN_It_Should_Not_Have_The_PlayerData()
         {
             // given
-            SessionsManager sessionsManager = _sessionsManager;
+            ISessionsManager sessionsManager = _sessionsManager;
             int playerId = _playerId;
             PlayerData playerData = _playerData;
             sessionsManager.AddSession(playerData);
@@ -71,7 +71,7 @@ namespace nGrpc.UnitTests.SessionTests
         public void GIVEN_SessionsManager_WHEN_Call_AddSession_THEN_Timer_Change_Sould_Be_Called_Once_With_Config_Timeout()
         {
             // given
-            SessionsManager sessionsManager = _sessionsManager;
+            ISessionsManager sessionsManager = _sessionsManager;
             PlayerData playerData = _playerData;
             TimerMock timerMock = _timerMock;
             SessionConfigs sessionConfigs = _sessionConfigs;
@@ -87,7 +87,7 @@ namespace nGrpc.UnitTests.SessionTests
         public void GIVEN_SessionsManager_With_A_Session_WHEN_Call_ResetTimer_THEN_Timer_Change_Sould_Be_Called_Once_With_Config_Timeout()
         {
             // given
-            SessionsManager sessionsManager = _sessionsManager;
+            ISessionsManager sessionsManager = _sessionsManager;
             int playerId = _playerId;
             PlayerData playerData = _playerData;
             TimerMock timerMock = _timerMock;
@@ -100,6 +100,71 @@ namespace nGrpc.UnitTests.SessionTests
 
             // then
             timerMock.SpyTimer.Received(1).Change(sessionConfigs.TimeoutInMilisec, Timeout.Infinite);
+        }
+
+        [Fact]
+        public void GIVEN_SessionsManager_With_A_Session_WHEN_Call_HasSessionBySessionId_With_Correct_PlayerId_And_SessionId_THEN_It_Should_Return_True()
+        {
+            // given
+            ISessionsManager sessionsManager = _sessionsManager;
+            int playerId = _playerId;
+            PlayerData playerData = _playerData;
+            Guid sessionId = sessionsManager.AddSession(playerData);
+
+            // when
+            bool b = sessionsManager.HasSessionBySessionId(playerId, sessionId);
+
+            // then
+            Assert.True(b);
+        }
+
+        [Fact]
+        public void GIVEN_SessionsManager_With_A_Session_WHEN_Call_HasSessionBySessionId_With_Correct_PlayerId_And_Wrong_SessionId_THEN_It_Should_Return_False()
+        {
+            // given
+            ISessionsManager sessionsManager = _sessionsManager;
+            int playerId = _playerId;
+            PlayerData playerData = _playerData;
+            Guid sessionId = sessionsManager.AddSession(playerData);
+
+            // when
+            bool b = sessionsManager.HasSessionBySessionId(playerId, Guid.NewGuid());
+
+            // then
+            Assert.False(b);
+        }
+
+        [Fact]
+        public void GIVEN_SessionsManager_With_A_Session_WHEN_Call_HasSessionBySecretKey_With_Correct_PlayerId_And_SecretKey_THEN_It_Should_Return_True()
+        {
+            // given
+            ISessionsManager sessionsManager = _sessionsManager;
+            int playerId = _playerId;
+            PlayerData playerData = _playerData;
+            Guid expectedSessionId = sessionsManager.AddSession(playerData);
+
+            // when
+            bool b = sessionsManager.HasSessionBySecretKey(playerId, playerData.SecretKey, out Guid sessionId);
+
+            // then
+            Assert.True(b);
+            Assert.Equal(expectedSessionId, sessionId);
+        }
+
+        [Fact]
+        public void GIVEN_SessionsManager_With_A_Session_WHEN_Call_HasSessionBySecretKey_With_Correct_PlayerId_And_Wrong_SecretKey_THEN_It_Should_Return_False()
+        {
+            // given
+            ISessionsManager sessionsManager = _sessionsManager;
+            int playerId = _playerId;
+            PlayerData playerData = _playerData;
+            Guid sessionId = sessionsManager.AddSession(playerData);
+
+            // when
+            bool b = sessionsManager.HasSessionBySecretKey(playerId, Guid.NewGuid(), out _);
+
+            // then
+            Assert.False(b);
         }
     }
 }

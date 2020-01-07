@@ -1,12 +1,14 @@
-﻿using nGrpc.ServerCommon;
+﻿using nGrpc.Common;
+using nGrpc.ServerCommon;
+using System;
 using System.Collections.Concurrent;
 using System.Threading;
 
 namespace nGrpc.Sessions
 {
-    public class SessionsManager
+    public class SessionsManager : ISessionsManager
     {
-        private readonly ConcurrentDictionary<int, Session> _sessionsDic = new ConcurrentDictionary<int, Session>();
+        private readonly ConcurrentDictionary<int, Session> _playerIdToSession = new ConcurrentDictionary<int, Session>();
         private readonly ITimerProvider _timerProvider;
         private readonly SessionConfigs _sessionConfigs;
 
@@ -20,18 +22,18 @@ namespace nGrpc.Sessions
         // private
         private Session GetSession(int playerId)
         {
-            _sessionsDic.TryGetValue(playerId, out Session session);
+            _playerIdToSession.TryGetValue(playerId, out Session session);
             return session;
         }
 
         private void RemoveSession(int playerId)
         {
-            _sessionsDic.TryRemove(playerId, out _);
+            _playerIdToSession.TryRemove(playerId, out _);
         }
 
 
         // public
-        public void AddSession(PlayerData playerData)
+        public Guid AddSession(PlayerData playerData)
         {
             int playerId = playerData.Id;
 
@@ -41,7 +43,9 @@ namespace nGrpc.Sessions
 
             Session newSession = new Session(playerData, timer);
 
-            _sessionsDic.AddOrUpdate(playerId, newSession, (id, session) => newSession);
+            _playerIdToSession.AddOrUpdate(playerId, newSession, (id, session) => newSession);
+
+            return newSession.Id;
         }
 
         public PlayerData GetPlayerData(int playerId)
@@ -62,6 +66,27 @@ namespace nGrpc.Sessions
 
             using (session.Lock())
                 session.Timer.Change(_sessionConfigs.TimeoutInMilisec, Timeout.Infinite);
+        }
+
+        public bool HasSessionBySessionId(int playerId, Guid sessionId)
+        {
+            if (_playerIdToSession.TryGetValue(playerId, out Session session) == true)
+                if (session.Id == sessionId)
+                    return true;
+
+            return false;
+        }
+
+        public bool HasSessionBySecretKey(int playerId, Guid secretKey, out Guid sessionId)
+        {
+            if (_playerIdToSession.TryGetValue(playerId, out Session session) == true)
+                if (session.PlayerData.SecretKey == secretKey)
+                {
+                    sessionId = session.Id;
+                    return true;
+                }
+
+            return false;
         }
     }
 }

@@ -2,6 +2,6 @@
 {
     public static class IntegrationTestServerExtender
     {
-        public static string CommandLineArgs = "";
+        public static string CommandLineArgs = "-DropDatabase";
     }
 }

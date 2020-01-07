@@ -1,4 +1,5 @@
-﻿using nGrpc.ServerCommon;
+﻿using nGrpc.Common;
+using nGrpc.ServerCommon;
 using Nito.AsyncEx;
 using System;
 
@@ -6,6 +7,7 @@ namespace nGrpc.Sessions
 {
     internal class Session
     {
+        public Guid Id { get; } = Guid.NewGuid();
         public PlayerData PlayerData { get; private set; }
         public ITimer Timer { get; private set; }
 

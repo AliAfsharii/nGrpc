@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\nGrpc.ServerCommon\nGrpc.ServerCommon.csproj" />
     <ProjectReference Include="..\..\nGrpc.Session\nGrpc.Session.csproj" />
+    <ProjectReference Include="..\..\Services\nGrpc.ProfileService\nGrpc.ProfileService.csproj" />
   </ItemGroup>
 
 </Project>
