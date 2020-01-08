@@ -27,6 +27,8 @@ namespace nGrpc.ProfileService
             if (_sessionsManager.HasSessionBySecretKey(playerId, secretKey, out Guid sessionId) == false)
             {
                 PlayerData playerData = await _profileRepository.Login(playerId, secretKey);
+                if (playerData == null)
+                    throw new LoginFailedException($"Login Failed for PlayerId:{playerId}, SecretKey:{secretKey}");
                 sessionId = _sessionsManager.AddSession(playerData);
             }
 

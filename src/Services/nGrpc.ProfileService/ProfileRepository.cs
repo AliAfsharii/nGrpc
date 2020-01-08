@@ -58,9 +58,6 @@ where id = @Id and data->>'SecretKey' = @SecretKey;";
                     SecretKey = secretKey.ToString()
                 });
 
-                if (json == null)
-                    throw new LoginFailedException($"Login Failed for PlayerId:{playerId}, SecretKey:{secretKey}");
-
                 PlayerData playerData = json.ToObject<PlayerData>();
                 return playerData;
             }

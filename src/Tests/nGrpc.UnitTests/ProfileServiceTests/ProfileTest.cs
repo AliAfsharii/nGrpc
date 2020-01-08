@@ -41,7 +41,7 @@ namespace nGrpc.UnitTests.ProfileServiceTests
         }
 
         [Fact]
-        public async Task GIVEN_Profie_WHEN_Call_Login_For_A_Player_Without_Active_Session_THEN_It_Should_Create_A_Session_And_Return_SessionId()
+        public async Task GIVEN_Profile_WHEN_Call_Login_For_A_Player_Without_Active_Session_THEN_It_Should_Create_A_Session_And_Return_SessionId()
         {
             // given
             IProfile profile = _profile;
@@ -71,12 +71,12 @@ namespace nGrpc.UnitTests.ProfileServiceTests
         }
 
         [Fact]
-        public async Task GIVEN_Profie_WHEN_Call_Login_For_A_Player_With_Active_Session_THEN_It_Should_Return_SessionId()
+        public async Task GIVEN_Profile_WHEN_Call_Login_For_A_Player_With_Active_Session_THEN_It_Should_Return_SessionId()
         {
             // given
             IProfile profile = _profile;
 
-            int playerId = 23145;
+            int playerId = 9867;
             Guid secretKey = Guid.NewGuid();
 
             IProfileRepository profileRepository = _profileRepository;
@@ -90,6 +90,26 @@ namespace nGrpc.UnitTests.ProfileServiceTests
             await profileRepository.Received(0).Login(Arg.Any<int>(), Arg.Any<Guid>());
             sessionsManager.Received(0).AddSession(Arg.Any<PlayerData>());
             Assert.Equal(expectedSessionId, sessionId);
+        }
+
+        [Fact]
+        public async Task GIVEN_Profile_WHEN_Call_Login_With_Wrong_SecrectKey_THEN_It_Should_Throw_LoginFailedException()
+        {
+            // given
+            IProfile profile = _profile;
+
+            int playerId = 6735;
+            Guid secretKey = Guid.NewGuid();
+
+            IProfileRepository profileRepository = _profileRepository;
+            profileRepository.Login(playerId, secretKey).Returns((PlayerData)null);
+
+            // when
+            Exception exception = await Record.ExceptionAsync(() => profile.Login(playerId, secretKey));
+
+            // then
+            Assert.NotNull(exception);
+            Assert.IsType<LoginFailedException>(exception);
         }
     }
 }
