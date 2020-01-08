@@ -11,10 +11,13 @@ namespace nGrpc.Client
     {
         public string Host { get; private set; }
         public int Port { get; private set; }
-
-        Channel Channel { get; set; }
-        public CallInvoker Invoker { get; private set; }
         public PlayerCredentials PlayerCredential { get; set; }
+
+
+        Channel _channel { get; set; }
+        CallInvoker _invoker { get; set; }
+        string _callHost;
+        CallOptions _callOption;
 
 
         public GrpcChannel()
@@ -26,18 +29,26 @@ namespace nGrpc.Client
             Host = host;
             Port = port;
 
-            Channel = new Channel(Host, Port, ChannelCredentials.Insecure);
-            Invoker = Channel.Intercept(new AuthInterceptor(this).AddHeader).Intercept(new LoggerInterceptor());
-            await Channel.ConnectAsync(DateTime.UtcNow + TimeSpan.FromSeconds(5));
-            ClientLogger.Logger.LogInfo(Channel.State.ToString());
+            _channel = new Channel(Host, Port, ChannelCredentials.Insecure);
+            _invoker = _channel.Intercept(new AuthInterceptor(this).AddHeader).Intercept(new LoggerInterceptor());
+            await _channel.ConnectAsync(DateTime.UtcNow + TimeSpan.FromSeconds(5));
+            ClientLogger.Logger.LogInfo(_channel.State.ToString());
         }
 
         public async Task Disconnect()
         {
-            ClientLogger.Logger.LogInfo(Channel.State.ToString());
+            ClientLogger.Logger.LogInfo(_channel.State.ToString());
             await Task.Delay(1000);
-            await Channel.ShutdownAsync();
-            ClientLogger.Logger.LogInfo(Channel.State.ToString());
+            await _channel.ShutdownAsync();
+            ClientLogger.Logger.LogInfo(_channel.State.ToString());
+        }
+
+        public async Task<TRes> CallRpc<TReq, TRes>(Method<TReq, TRes> descriptor, TReq request)
+        where TReq : class
+        where TRes : class
+        {
+            TRes res = await _invoker.AsyncUnaryCall(descriptor, _callHost, _callOption, request);
+            return res;
         }
     }
 }

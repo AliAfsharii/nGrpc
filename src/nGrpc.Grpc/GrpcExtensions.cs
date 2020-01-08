@@ -5,9 +5,9 @@ using static Grpc.Core.ServerServiceDefinition;
 
 namespace nGrpc.Grpc
 {
-    public static class GrpcExtensions
+    internal static class GrpcExtensions
     {
-        public static Builder AddServices(this Builder grpcBuilder, IEnumerable<IGrpcService> services)
+        internal static Builder AddServices(this Builder grpcBuilder, IEnumerable<IGrpcService> services)
         {
             IGrpcBuilderAdapter builder = new GrpcBuilderAdapter(grpcBuilder);
             foreach (var service in services)
