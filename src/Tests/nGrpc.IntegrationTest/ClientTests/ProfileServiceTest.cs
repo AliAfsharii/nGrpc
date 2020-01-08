@@ -21,5 +21,24 @@ namespace nGrpc.IntegrationTest.ClientTests
             Assert.True(res.PlayerId > 0);
             Assert.NotEqual(Guid.Empty, res.SecretKey);
         }
+
+        [Fact]
+        public async Task Profile_LoginRPC_Test()
+        {
+            GrpcChannel channel = await TestUtils.GetNewChannel();
+
+            ProfileGrpcSerivce profileGrpcSerivce = new ProfileGrpcSerivce(channel);
+            RegisterRes registerRes = await profileGrpcSerivce.RegisterRPC(new RegisterReq());
+            LoginReq req = new LoginReq
+            {
+                PlayerId = registerRes.PlayerId,
+                SecretKey = registerRes.SecretKey
+            };
+            LoginRes loginRes = await profileGrpcSerivce.LoginRPC(req);
+
+            Assert.NotNull(loginRes);
+            Assert.Equal(registerRes.PlayerId, loginRes.PlayerId);
+            Assert.NotEqual(Guid.Empty, loginRes.SessionId);
+        }
     }
 }

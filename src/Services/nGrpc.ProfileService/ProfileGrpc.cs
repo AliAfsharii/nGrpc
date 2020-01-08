@@ -23,6 +23,7 @@ namespace nGrpc.ProfileService
         public void AddRpcMethods(IGrpcBuilderAdapter grpcBuilder)
         {
             grpcBuilder.AddMethod(ProfileDescriptors.RegisterDesc, RegisterRPC);
+            grpcBuilder.AddMethod(ProfileDescriptors.LoginDesc, LoginRPC);
         }
 
         public async Task<RegisterRes> RegisterRPC(RegisterReq req, ServerCallContext context)
@@ -32,6 +33,20 @@ namespace nGrpc.ProfileService
             {
                 PlayerId = playerId,
                 SecretKey = secretKey
+            };
+        }
+
+        public async Task<LoginRes> LoginRPC(LoginReq req, ServerCallContext context)
+        {
+            int playerId = req.PlayerId;
+            Guid secretKey = req.SecretKey;
+
+            Guid res = await _profile.Login(playerId, secretKey);
+
+            return new LoginRes
+            {
+                PlayerId = playerId,
+                SessionId = res
             };
         }
     }
