@@ -19,11 +19,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nGrpc.Session", "nGrpc.Sess
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nGrpc.UnitTests", "Tests\nGrpc.UnitTests\nGrpc.UnitTests.csproj", "{0FE0D8A5-A31D-4611-A357-A970F1FA2511}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nGrpc.ProfileService", "Services\nGrpc.ProfileService\nGrpc.ProfileService.csproj", "{4D2E71CF-593C-4000-9814-008A78A60DB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nGrpc.ProfileService", "Services\nGrpc.ProfileService\nGrpc.ProfileService.csproj", "{4D2E71CF-593C-4000-9814-008A78A60DB6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nGrpc.Common", "nGrpc.Common\nGrpc.Common.csproj", "{46EC9735-A72C-4AAF-B40F-D23D38204241}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nGrpc.Common", "nGrpc.Common\nGrpc.Common.csproj", "{46EC9735-A72C-4AAF-B40F-D23D38204241}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{946148D6-1F07-4514-B168-64D10759950F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nGrpc.Client", "nGrpc.Client\nGrpc.Client.csproj", "{139A1432-1743-4104-9C0C-6DCACBBC46DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -67,6 +69,10 @@ Global
 		{46EC9735-A72C-4AAF-B40F-D23D38204241}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46EC9735-A72C-4AAF-B40F-D23D38204241}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46EC9735-A72C-4AAF-B40F-D23D38204241}.Release|Any CPU.Build.0 = Release|Any CPU
+		{139A1432-1743-4104-9C0C-6DCACBBC46DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{139A1432-1743-4104-9C0C-6DCACBBC46DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{139A1432-1743-4104-9C0C-6DCACBBC46DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{139A1432-1743-4104-9C0C-6DCACBBC46DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
