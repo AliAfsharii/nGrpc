@@ -29,6 +29,8 @@ namespace nGrpc.ProfileService
         public async Task<RegisterRes> RegisterRPC(RegisterReq req, ServerCallContext context)
         {
             (int playerId, Guid secretKey) = await _profile.Register();
+            _logger.LogInformation("RegisterRPC, PlayerId:{pid}, SecretKey:{sk}", playerId, secretKey);
+
             return new RegisterRes
             {
                 PlayerId = playerId,
@@ -41,12 +43,13 @@ namespace nGrpc.ProfileService
             int playerId = req.PlayerId;
             Guid secretKey = req.SecretKey;
 
-            Guid res = await _profile.Login(playerId, secretKey);
+            Guid sessionId = await _profile.Login(playerId, secretKey);
+            _logger.LogInformation("LoginRPC, PlayerId:{pid}, SecretKey:{sk}, SessionId:{si}", playerId, secretKey, sessionId);
 
             return new LoginRes
             {
                 PlayerId = playerId,
-                SessionId = res
+                SessionId = sessionId
             };
         }
     }

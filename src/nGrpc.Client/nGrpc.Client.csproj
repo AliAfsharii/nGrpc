@@ -8,4 +8,10 @@
     <ProjectReference Include="..\nGrpc.Common\nGrpc.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Unity Plugin\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

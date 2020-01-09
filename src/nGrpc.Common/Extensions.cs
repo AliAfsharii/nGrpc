@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using MessagePack;
 
 namespace nGrpc.Common
 {
@@ -19,28 +18,6 @@ namespace nGrpc.Common
                 return default;
 
             return JsonConvert.DeserializeObject<T>(json);
-        }
-
-        public static T CloneByMessagePack<T>(this T obj)
-        {
-            byte[] b = MessagePackSerializer.Typeless.Serialize(obj);
-            T o = (T)MessagePackSerializer.Typeless.Deserialize(b);
-            return o;
-        }
-
-        public static byte[] ToBytes<T>(this T obj)
-        {
-            byte[] b = MessagePackSerializer.Typeless.Serialize(obj);
-            return b;
-        }
-
-        public static T ToObject<T>(this byte[] bytes)
-        {
-            if (bytes == null)
-                return default;
-
-            T o = (T)MessagePackSerializer.Typeless.Deserialize(bytes);
-            return o;
         }
     }
 }

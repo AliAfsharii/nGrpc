@@ -1,4 +1,5 @@
 ﻿using Grpc.Core;
+using System.Text;
 
 namespace nGrpc.Common
 {
@@ -27,12 +28,17 @@ namespace nGrpc.Common
         {
             public static byte[] ToBytes(T obj)
             {
-                return obj.ToBytes();
+                string st = obj.ToJson();
+                return Encoding.UTF8.GetBytes(st);
             }
 
             public static T FromBytes(byte[] bytes)
             {
-                return bytes.ToObject<T>();
+                if (bytes == null)
+                    return null;
+
+                string st = Encoding.UTF8.GetString(bytes);
+                return st.ToObject<T>();
             }
         }
     }
