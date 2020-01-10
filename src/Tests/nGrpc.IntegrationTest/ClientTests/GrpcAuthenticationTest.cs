@@ -1,7 +1,7 @@
 ﻿using Grpc.Core;
 using nGrpc.Client;
 using nGrpc.Client.GrpcServices;
-using nGrpc.Common.Models;
+using nGrpc.Common;
 using System;
 using System.Threading.Tasks;
 using Xunit;

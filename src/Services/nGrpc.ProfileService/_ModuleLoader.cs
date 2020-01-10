@@ -12,7 +12,7 @@ namespace nGrpc.ProfileService
         {
             services.AddSingleton<IProfileRepository, ProfileRepository>();
             services.AddSingleton<IProfile, Profile>();
-            services.AddSingleton<IGrpcService, ProfileGrpc>();
+            services.AddSingleton<IGrpcService, ProfileGrpcService>();
         }
 
         public System.Collections.Generic.List<(int priorityIndex, Func<Task> func)> Initializer(IServiceProvider serviceProvider)

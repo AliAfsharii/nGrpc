@@ -60,9 +60,9 @@ namespace nGrpc.Grpc
 
         public async Task SendEventToPlayers(IEnumerable<int> playerIds, ServerEventRes serverEvent)
         {
-            var tasks = playerIds.Select(async pi =>
+            var tasks = playerIds.Select(async playerId =>
             {
-                if (StreamsDic.TryGetValue(pi, out var streamWriter) == true)
+                if (StreamsDic.TryGetValue(playerId, out var streamWriter) == true)
                 {
                     try
                     {
@@ -70,7 +70,7 @@ namespace nGrpc.Grpc
                     }
                     catch (Exception e)
                     {
-                        StreamsDic.TryRemove(pi, out var a);
+                        StreamsDic.TryRemove(playerId, out var a);
                         _logger?.LogInformation(e, "ServerStreamWriter.WriteAsync Error, PlayerId:{pi}", playerId);
                     }
                 }

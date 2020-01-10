@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace nGrpc.Common.Models
+namespace nGrpc.Common
 {
     public class RegisterReq
     {

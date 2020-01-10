@@ -15,6 +15,7 @@ namespace nGrpc.Grpc
             services.AddSingleton<GrpcServer>();
             services.AddSingleton<ServerInterceptor>();
             services.AddSingleton<IServerEventStreamsManager, ServerEventStreamsManager>();
+            services.AddSingleton<IGrpcService, BaseGrpcService>();
         }
 
         public List<(int priorityIndex, Func<Task> func)> Initializer(IServiceProvider serviceProvider)

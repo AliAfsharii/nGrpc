@@ -1,5 +1,4 @@
 ﻿using Grpc.Core;
-using nGrpc.Common.Models;
 
 namespace nGrpc.Common.Descriptors
 {

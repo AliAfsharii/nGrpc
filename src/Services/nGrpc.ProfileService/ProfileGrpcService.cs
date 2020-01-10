@@ -2,19 +2,18 @@
 using Microsoft.Extensions.Logging;
 using nGrpc.Common;
 using nGrpc.Common.Descriptors;
-using nGrpc.Common.Models;
 using nGrpc.ServerCommon;
 using System;
 using System.Threading.Tasks;
 
 namespace nGrpc.ProfileService
 {
-    public class ProfileGrpc : IGrpcService
+    public class ProfileGrpcService : IGrpcService
     {
-        private readonly ILogger<ProfileGrpc> _logger;
+        private readonly ILogger<ProfileGrpcService> _logger;
         private readonly IProfile _profile;
 
-        public ProfileGrpc(ILogger<ProfileGrpc> logger,
+        public ProfileGrpcService(ILogger<ProfileGrpcService> logger,
             IProfile profile)
         {
             _logger = logger;

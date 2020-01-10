@@ -1,6 +1,5 @@
 ﻿using nGrpc.Common;
 using nGrpc.Common.Descriptors;
-using nGrpc.Common.Models;
 using System.Threading.Tasks;
 
 namespace nGrpc.Client.GrpcServices
@@ -28,6 +27,7 @@ namespace nGrpc.Client.GrpcServices
             if (res != null)
             {
                 _grpcChannel.PlayerCredential = new PlayerCredentials { PlayerId = res.PlayerId, SessionId = res.SessionId };
+                await _grpcChannel.ConnectServerEventStream();
             }
 
             return res;
