@@ -13,6 +13,7 @@ namespace nGrpc.Grpc
         {
             services.AddConfig<GrpcConfigs>(configuration, "GrpcConfigs");
             services.AddSingleton<GrpcServer>();
+            services.AddSingleton<ServerInterceptor>();
         }
 
         public List<(int priorityIndex, Func<Task> func)> Initializer(IServiceProvider serviceProvider)
