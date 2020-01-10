@@ -40,5 +40,20 @@ namespace nGrpc.IntegrationTest.ClientTests
             Assert.Equal(registerRes.PlayerId, loginRes.PlayerId);
             Assert.NotEqual(Guid.Empty, loginRes.SessionId);
         }
+
+        [Fact]
+        public async Task ChangeCustomDataRPC_Test()
+        {
+            (GrpcChannel grpcChannel, LoginRes loginRes) = await TestUtils.GetNewLoginedChannel();
+            ProfileGrpcSerivce profileGrpcSerivce = new ProfileGrpcSerivce(grpcChannel);
+
+            ChangeCustomDataReq req = new ChangeCustomDataReq
+            {
+                CustomData = "jahdsf sg asdoh asoihdfa dfa"
+            };
+            ChangeCustomDataRes res = await profileGrpcSerivce.ChangeCustomDataRPC(req);
+
+            Assert.Equal(req.CustomData, res.PlayerData.CustomData);
+        }
     }
 }

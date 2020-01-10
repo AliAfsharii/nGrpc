@@ -1,5 +1,6 @@
 ﻿using Grpc.Core;
 using Microsoft.Extensions.Logging;
+using nGrpc.Common;
 using nGrpc.Common.Descriptors;
 using nGrpc.Common.Models;
 using nGrpc.ServerCommon;
@@ -24,6 +25,7 @@ namespace nGrpc.ProfileService
         {
             grpcBuilder.AddMethod(ProfileDescriptors.RegisterDesc, RegisterRPC);
             grpcBuilder.AddMethod(ProfileDescriptors.LoginDesc, LoginRPC);
+            grpcBuilder.AddMethod(ProfileDescriptors.ChangeCustomDataDesc, ChangeCustomDataRPC);
         }
 
         public async Task<RegisterRes> RegisterRPC(RegisterReq req, ServerCallContext context)
@@ -50,6 +52,20 @@ namespace nGrpc.ProfileService
             {
                 PlayerId = playerId,
                 SessionId = sessionId
+            };
+        }
+
+        public async Task<ChangeCustomDataRes> ChangeCustomDataRPC(ChangeCustomDataReq req, ServerCallContext context)
+        {
+            int playerId = context.GetPlayerCredential().PlayerId;
+            string customData = req.CustomData;
+
+            PlayerData playerData = await _profile.ChangePlayerCustomData(playerId, customData);
+            _logger.LogInformation("ChangeCustomDataRPC, PlayerId:{pi}, CustomData:{cd}", playerData, customData);
+
+            return new ChangeCustomDataRes
+            {
+                PlayerData = playerData
             };
         }
     }

@@ -32,5 +32,11 @@ namespace nGrpc.Client.GrpcServices
 
             return res;
         }
+
+        public async Task<ChangeCustomDataRes> ChangeCustomDataRPC(ChangeCustomDataReq req)
+        {
+            var res = await _grpcChannel.CallRpc(ProfileDescriptors.ChangeCustomDataDesc, req);
+            return res;
+        }
     }
 }

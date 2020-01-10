@@ -21,4 +21,13 @@ namespace nGrpc.Common.Models
         public int PlayerId { get; set; }
         public Guid SessionId { get; set; }
     }
+
+    public class ChangeCustomDataReq
+    {
+        public string CustomData { get; set; }
+    }
+    public class ChangeCustomDataRes
+    {
+        public PlayerData PlayerData { get; set; }
+    }
 }
