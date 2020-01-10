@@ -10,7 +10,8 @@ namespace nGrpc.ProfileService
         private readonly IProfileRepository _profileRepository;
         private readonly ISessionsManager _sessionsManager;
 
-        public Profile(IProfileRepository profileRepository, ServerCommon.ISessionsManager sessionsManager)
+        public Profile(IProfileRepository profileRepository,
+            ISessionsManager sessionsManager)
         {
             _profileRepository = profileRepository;
             _sessionsManager = sessionsManager;
@@ -33,6 +34,12 @@ namespace nGrpc.ProfileService
             }
 
             return sessionId;
+        }
+
+        public async Task<PlayerData> ChangePlayerCustomData(int playerId, string customData)
+        {
+            PlayerData playerData = await _sessionsManager.ManipulatePlayerData(playerId, p => p.CustomData = customData);
+            return playerData;
         }
     }
 }

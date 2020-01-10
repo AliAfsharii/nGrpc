@@ -111,5 +111,29 @@ namespace nGrpc.UnitTests.ProfileServiceTests
             Assert.NotNull(exception);
             Assert.IsType<LoginFailedException>(exception);
         }
+
+        [Fact]
+        public async Task GIVEN_Profile_WHEN_Call_ChangePlayerCustomData_THEN_Session_ManipulatePlayerData_Should_Be_Called_Once()
+        {
+            // given
+            IProfile profile = _profile;
+            int playerId = 65765;
+            string customData = "player custom data";
+
+            ISessionsManager sessionsManager = _sessionsManager;
+            PlayerData expectedPlayerData = new PlayerData();
+            sessionsManager.ManipulatePlayerData(playerId, Arg.Any<Action<PlayerData>>())
+                .Returns(x =>
+                {
+                    x.ArgAt<Action<PlayerData>>(1).Invoke(expectedPlayerData);
+                    return expectedPlayerData;
+                });
+
+            // when
+            PlayerData playerData = await profile.ChangePlayerCustomData(playerId, customData);
+
+            // then
+            Assert.Equal(customData, expectedPlayerData.CustomData);
+        }
     }
 }

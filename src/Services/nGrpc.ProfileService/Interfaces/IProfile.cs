@@ -1,4 +1,5 @@
-﻿using System;
+﻿using nGrpc.Common;
+using System;
 using System.Threading.Tasks;
 
 namespace nGrpc.ProfileService
@@ -7,5 +8,6 @@ namespace nGrpc.ProfileService
     {
         Task<Guid> Login(int playerId, Guid secretKey);
         Task<(int playerId, Guid secretKey)> Register();
+        Task<PlayerData> ChangePlayerCustomData(int playerId, string customData);
     }
 }

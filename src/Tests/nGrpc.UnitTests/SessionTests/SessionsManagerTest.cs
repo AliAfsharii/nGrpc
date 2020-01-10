@@ -5,6 +5,7 @@ using nGrpc.ServerCommon;
 using NSubstitute;
 using System.Threading;
 using nGrpc.Common;
+using System.Threading.Tasks;
 
 namespace nGrpc.UnitTests.SessionTests
 {
@@ -12,6 +13,7 @@ namespace nGrpc.UnitTests.SessionTests
     {
         int _playerId = 389465;
         ISessionsManager _sessionsManager;
+        IProfileRepository _profileRepository;
         PlayerData _playerData;
 
         TimerMock _timerMock;
@@ -24,8 +26,9 @@ namespace nGrpc.UnitTests.SessionTests
             timerProvider.CreateTimer().Returns(_timerMock);
 
             _sessionConfigs = new SessionConfigs { TimeoutInMilisec = 35312 };
+            _profileRepository = Substitute.For<IProfileRepository>();
 
-            _sessionsManager = new SessionsManager(timerProvider, _sessionConfigs);
+            _sessionsManager = new SessionsManager(timerProvider, _sessionConfigs, _profileRepository);
             _playerData = new PlayerData { Id = _playerId, SecretKey = Guid.NewGuid() };    
         }
 
@@ -165,6 +168,28 @@ namespace nGrpc.UnitTests.SessionTests
 
             // then
             Assert.False(b);
+        }
+
+        [Fact]
+        public async Task GIVEN_SessionsManager_With_A_Session_WHEN_Call_ManipulatePlayerData_And_Change_CustomData_THEN_It_Should_Return_PlayerData_With_New_CustomData()
+        {
+            // given
+            ISessionsManager sessionsManager = _sessionsManager;
+            IProfileRepository profileRepository = _profileRepository;
+            int playerId = _playerId;
+            PlayerData playerData = _playerData;
+            Guid sessionId = sessionsManager.AddSession(playerData);
+            string customData = "custom";
+
+            // when
+            PlayerData pd = await sessionsManager.ManipulatePlayerData(playerId, p => p.CustomData = customData);
+
+            // then
+            Assert.Equal(customData, pd.CustomData);
+            var p = sessionsManager.GetPlayerData(playerId);
+            Assert.Equal(p.ToJson(), pd.ToJson());
+            Assert.NotStrictEqual(playerData, pd);
+            await profileRepository.Received(1).SavePlayerData(playerData);
         }
     }
 }

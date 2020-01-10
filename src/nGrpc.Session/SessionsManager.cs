@@ -3,6 +3,7 @@ using nGrpc.ServerCommon;
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace nGrpc.Sessions
 {
@@ -11,11 +12,15 @@ namespace nGrpc.Sessions
         private readonly ConcurrentDictionary<int, Session> _playerIdToSession = new ConcurrentDictionary<int, Session>();
         private readonly ITimerProvider _timerProvider;
         private readonly SessionConfigs _sessionConfigs;
+        private readonly IProfileRepository _profileRepository;
 
-        public SessionsManager(ITimerProvider timerProvider, SessionConfigs sessionConfigs)
+        public SessionsManager(ITimerProvider timerProvider,
+            SessionConfigs sessionConfigs,
+            IProfileRepository profileRepository)
         {
             _timerProvider = timerProvider;
             _sessionConfigs = sessionConfigs;
+            _profileRepository = profileRepository;
         }
 
 
@@ -23,6 +28,8 @@ namespace nGrpc.Sessions
         private Session GetSession(int playerId)
         {
             _playerIdToSession.TryGetValue(playerId, out Session session);
+            if (session == null)
+                throw new ThereIsNoPlayerDataForSuchPlayerException($"PlayerId: {playerId}");
             return session;
         }
 
@@ -51,9 +58,6 @@ namespace nGrpc.Sessions
         public PlayerData GetPlayerData(int playerId)
         {
             Session session = GetSession(playerId);
-            if (session == null)
-                throw new ThereIsNoPlayerDataForSuchPlayerException($"PlayerId: {playerId}");
-
             using (session.Lock())
                 return session.PlayerData.CloneByMessagePack();
         }
@@ -61,9 +65,6 @@ namespace nGrpc.Sessions
         public void ResetTimer(int playerId)
         {
             Session session = GetSession(playerId);
-            if (session == null)
-                throw new ThereIsNoPlayerDataForSuchPlayerException($"PlayerId: {playerId}");
-
             using (session.Lock())
                 session.Timer.Change(_sessionConfigs.TimeoutInMilisec, Timeout.Infinite);
         }
@@ -87,6 +88,21 @@ namespace nGrpc.Sessions
                 }
 
             return false;
+        }
+
+        public async Task<PlayerData> ManipulatePlayerData(int playerId, Action<PlayerData> action)
+        {
+            Session session = GetSession(playerId);
+
+            using (await session.LockAsync())
+            {
+                PlayerData playerData = session.PlayerData;
+
+                action(playerData);
+
+                await _profileRepository.SavePlayerData(session.PlayerData);
+                return playerData.CloneByMessagePack();
+            }
         }
     }
 }

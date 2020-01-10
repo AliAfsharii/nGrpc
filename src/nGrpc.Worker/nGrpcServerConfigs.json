@@ -8,14 +8,14 @@
   },
   "AllowedHosts": "*",
   "KestrelConfigs": {
-    "Host": "0.0.0.0",
+    "Host": "127.0.0.1",
     "Port": 4040
   },
   "DBConfigs": {
     "ConnectionString": "Host=localhost;Port=5432;Username=postgres;Password=1;Database=nGrpcDB"
   },
   "GrpcConfigs": {
-    "Host": "0.0.0.0",
+    "Host": "127.0.0.1",
     "Port": 5051
   },
   "SessionConfigs": {

@@ -63,5 +63,14 @@ where id = @Id and data->>'SecretKey' = @SecretKey;";
             }
         }
 
+        public async Task SavePlayerData(PlayerData playerData)
+        {
+            using (var conn = _dbProvider.GetConnection())
+            {
+                await conn.OpenAsync();
+                string query = "update players set data=@Data::jsonb where id=@Id";
+                await conn.ExecuteAsync(query, new { Id = playerData.Id, Data = playerData.ToJson() });
+            }
+        }
     }
 }
