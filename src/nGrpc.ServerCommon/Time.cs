@@ -2,7 +2,7 @@
 
 namespace nGrpc.ServerCommon
 {
-    public class Time : ITime
+    internal class Time : ITime
     {
         public DateTime UTCTime => DateTime.UtcNow;
     }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace nGrpc.ServerCommon
 {
-    public class ModuleLoader : IModuleLoader
+    internal class ModuleLoader : IModuleLoader
     {
         public void AddServices(IServiceCollection services, IConfiguration configuration)
         {

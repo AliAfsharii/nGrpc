@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace nGrpc.ServerCommon
 {
-    public class TimerProvider : ITimerProvider
+    internal class TimerProvider : ITimerProvider
     {
         public ITimer CreateTimer()
         {
@@ -11,7 +11,7 @@ namespace nGrpc.ServerCommon
         }
     }
 
-    public class ServerTimer : ITimer
+    internal class ServerTimer : ITimer
     {
         Timer _timer;
 
