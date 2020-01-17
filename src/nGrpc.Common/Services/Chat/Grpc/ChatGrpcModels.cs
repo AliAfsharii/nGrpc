@@ -8,4 +8,14 @@
     {
 
     }
+
+    public class SendChatReq
+    {
+        public string RoomName { get; set; }
+        public string Text { get; set; }
+    }
+    public class SendChatRes
+    {
+
+    }
 }

@@ -2,7 +2,7 @@
 {
     public enum ServerEventType
     {
-        Test
+        Test, Chat
     }
 
     public class ServerEventReq

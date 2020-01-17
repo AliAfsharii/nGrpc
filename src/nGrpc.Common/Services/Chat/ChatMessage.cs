@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace nGrpc.ChatService
+namespace nGrpc.Common
 {
     public class ChatMessage
     {

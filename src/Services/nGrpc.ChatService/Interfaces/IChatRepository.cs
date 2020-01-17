@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using nGrpc.Common;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace nGrpc.ChatService
