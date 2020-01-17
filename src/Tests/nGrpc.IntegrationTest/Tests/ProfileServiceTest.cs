@@ -5,7 +5,7 @@ using System;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace nGrpc.IntegrationTest.ClientTests
+namespace nGrpc.IntegrationTest
 {
     public class ProfileServiceTest : IntegrationTestBase
     {

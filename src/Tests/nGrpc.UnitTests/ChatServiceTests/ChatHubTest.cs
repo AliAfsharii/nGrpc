@@ -175,7 +175,7 @@ namespace nGrpc.UnitTests.ChatServiceTests
         }
 
         [Fact]
-        public void GIVEN_ChatHub_With_A_Joined_Player_WHEN_LeaveRoom_And_Call_IsPlayerJoined_THEN_It_Should_Return_False()
+        public void GIVEN_ChatHub_With_A_Joined_Player_WHEN_Call_LeaveRoom_And_Call_IsPlayerJoined_THEN_It_Should_Return_False()
         {
             // given
             ChatHub chatHub = _chatHub;

@@ -5,14 +5,14 @@ namespace nGrpc.ChatService
 {
     public class ChatRepository : IChatRepository
     {
-        public Task<List<ChatMessage>> GetLastChatMessages(string roomName, int lastChatsCount)
+        public async Task<List<ChatMessage>> GetLastChatMessages(string roomName, int lastChatsCount)
         {
-            throw new System.NotImplementedException();
+            return new List<ChatMessage>();
         }
 
-        public Task SaveChats(List<ChatMessage> chatMessages)
+        public async Task SaveChats(List<ChatMessage> chatMessages)
         {
-            throw new System.NotImplementedException();
+            
         }
     }
 }

@@ -6,7 +6,7 @@ namespace nGrpc.ServerCommon
     {
         private readonly Hub hub;
 
-        internal PubSubHub()
+        public PubSubHub()
         {
             hub = new Hub();
         }

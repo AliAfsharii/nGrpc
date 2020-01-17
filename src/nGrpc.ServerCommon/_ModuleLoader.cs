@@ -12,6 +12,7 @@ namespace nGrpc.ServerCommon
         {
             services.AddSingleton<ITimerProvider, TimerProvider>();
             services.AddSingleton<ITime, Time>();
+            services.AddSingleton<IPubSubHub, PubSubHub>();
         }
 
         public List<(int priorityIndex, Func<Task> func)> Initializer(IServiceProvider serviceProvider)

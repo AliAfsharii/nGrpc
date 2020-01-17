@@ -52,7 +52,7 @@ namespace nGrpc.Grpc
                 }
                 catch (Exception e)
                 {
-                    StreamsDic.TryRemove(playerId, out var a);
+                    RemoveStream(playerId);
                     _logger?.LogError(e, "ServerStreamWriter.WriteAsync Error, PlayerId:{pi}", playerId);
                 }
             }
@@ -70,7 +70,7 @@ namespace nGrpc.Grpc
                     }
                     catch (Exception e)
                     {
-                        StreamsDic.TryRemove(playerId, out var a);
+                        RemoveStream(playerId);
                         _logger?.LogInformation(e, "ServerStreamWriter.WriteAsync Error, PlayerId:{pi}", playerId);
                     }
                 }
@@ -92,7 +92,7 @@ namespace nGrpc.Grpc
                 }
                 catch (Exception e)
                 {
-                    StreamsDic.TryRemove(playerId, out var a);
+                    RemoveStream(playerId);
                     _logger?.LogError(e, "ServerStreamWriter.WriteAsync Error, PlayerId:{pi}", playerId);
                 }
             });

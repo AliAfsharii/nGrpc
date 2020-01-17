@@ -23,12 +23,17 @@
   "SessionConfigs": {
     "TimeoutInMilisec": 600000
   },
+  "ChatConfigs": {
+    "ChatGetLastChatsCount": 30,
+    "ChatSaveIntervalInMilisec": 20000
+  },
   "ModuleNames": [
     "nGrpc.Worker",
     "nGrpc.DB",
     "nGrpc.Grpc",
     "nGrpc.Session",
     "nGrpc.ServerCommon",
-    "nGrpc.ProfileService"
+    "nGrpc.ProfileService",
+    "nGrpc.ChatService"
   ]
 }
