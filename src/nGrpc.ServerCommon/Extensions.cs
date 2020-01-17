@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using nGrpc.Common;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace nGrpc.ServerCommon
 {
@@ -30,6 +31,9 @@ namespace nGrpc.ServerCommon
 
             return credential;
         }
+
+        public static void NoAwait(this Task task)
+        { }
 
         public static T CloneByMessagePack<T>(this T obj)
         {

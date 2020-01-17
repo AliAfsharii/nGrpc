@@ -6,6 +6,7 @@ using NSubstitute;
 using nGrpc.Common;
 using System.Collections.Generic;
 using System;
+using Microsoft.Extensions.Logging;
 
 namespace nGrpc.UnitTests.ChatServiceTests
 {
@@ -15,7 +16,8 @@ namespace nGrpc.UnitTests.ChatServiceTests
         IPubSubHub _pubSubHub;
         ChatConfigs _chatConfigs = new ChatConfigs
         {
-            ChatGetLatestChatsCount = 5
+            ChatGetLatestChatsCount = 5,
+            ChatSaveIntervalInMilisec = 10 * 1000
         };
         ITime _time;
 
@@ -23,8 +25,18 @@ namespace nGrpc.UnitTests.ChatServiceTests
         {
             _pubSubHub = Substitute.For<IPubSubHub>();
             _time = Substitute.For<ITime>();
-            _chatHub = new ChatHub(_pubSubHub, _time, _chatConfigs);
+            ChatRoom chatRoomFactory() => CreateChatRoom();
+            _chatHub = new ChatHub(chatRoomFactory);
         }
+
+        ChatRoom CreateChatRoom()
+        {
+            ILogger<ChatRoom> logger = Substitute.For<ILogger<ChatRoom>>();     
+            IChatRepository chatRepository = Substitute.For<IChatRepository>();
+
+            return new ChatRoom(logger, _time, _chatConfigs, chatRepository, _pubSubHub);
+        }
+
 
         [Fact]
         public void GIVEN_ChatHub_WHEN_Call_Join_A_Room_And_Call_IsPlayerJoined_THEN_It_Should_Return_True()
