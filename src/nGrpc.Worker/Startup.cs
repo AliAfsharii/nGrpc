@@ -71,6 +71,7 @@ namespace nGrpc.Worker
             });
 
             ModuleLoaderUtils.Execute_AllModuleLoaders_Initializer(serviceProvider).GetAwaiter().GetResult();
+            Program.ServerIsReady = true;
         }
     }
 }

@@ -9,7 +9,8 @@
   "AllowedHosts": "*",
   "KestrelConfigs": {
     "Host": "127.0.0.1",
-    "Port": 4040
+    "Port": 4040,
+    "MaxConcurrentConnections": 100
   },
   "DBConfigs": {
     "ConnectionString": "Host=localhost;Port=5432;Username=postgres;Password=1;Database=nGrpcDB"

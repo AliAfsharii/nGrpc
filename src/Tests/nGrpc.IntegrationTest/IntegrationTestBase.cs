@@ -9,7 +9,8 @@ namespace nGrpc.IntegrationTest
     public class IntegrationTestBase
     {
         static readonly object _lock = new object();
-        static bool IsServerRunning = false;
+        static bool _isServerRunning = false;
+        static Exception _exception;
 
         public IServiceProvider ServiceProvider
         {
@@ -19,46 +20,33 @@ namespace nGrpc.IntegrationTest
             }
         }
 
-        KestrelConfigs KestrelConfigs
-        {
-            get
-            {
-                return ServiceProvider.GetRequiredService<KestrelConfigs>();
-            }
-        }
-
         public IntegrationTestBase()
         {
             lock (_lock)
-                if (IsServerRunning == false)
+                if (_isServerRunning == false)
                 {
-                    string args = IntegrationTestServerExtender.CommandLineArgs;
-                    Task.Run(() => Program.Main(args.Split(' ')));
-                    Task timeoutTask = Task.Delay(10000);
+                    if (_exception != null)
+                        throw _exception;
 
-                    while (timeoutTask.IsCompleted == false)
+                    string args = IntegrationTestServerExtender.CommandLineArgs;
+                    Task serverRunTask = Task.Run(() => Program.Main(args.Split(' ')));
+                    Task timeoutTask = Task.Delay(15000);
+
+                    while (Program.ServerIsReady == false && timeoutTask.IsCompleted == false && serverRunTask.Exception == null)
+                        Task.Delay(1000).Wait();
+
+                    if (serverRunTask.Exception != null)
                     {
-                        try
-                        {
-                            using (TcpClient tcpClient = new TcpClient())
-                            {
-                                tcpClient.Connect(KestrelConfigs.Host, KestrelConfigs.Port);
-                                Console.WriteLine("Port open");
-                                Task.Delay(500).Wait();
-                                break;
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            Console.WriteLine("Port closed");
-                            Task.Delay(1000).Wait();
-                        }
+                        _exception = new AggregateException("Server encountered an exception.", serverRunTask.Exception);
+                        throw _exception;
+                    }
+                    else if (timeoutTask.IsCompleted == true)
+                    {
+                        _exception = new Exception("Integration Test Server Timeout Reached.");
+                        throw _exception;
                     }
 
-                    if (timeoutTask.Exception != null)
-                        throw new Exception("Integration Test Server Timeout Reached.");
-
-                    IsServerRunning = true;
+                    _isServerRunning = true;
                 }
         }
 

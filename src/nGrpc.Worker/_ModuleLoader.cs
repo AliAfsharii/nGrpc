@@ -12,6 +12,7 @@ namespace nGrpc.Worker
         public void AddServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddConfig<LogLevelConfigs>(configuration, "Logging:LogLevel");
+            services.AddConfig<KestrelConfigs>(configuration, "KestrelConfigs");
         }
 
         public List<(int priorityIndex, Func<Task> func)> Initializer(IServiceProvider serviceProvider)

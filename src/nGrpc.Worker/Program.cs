@@ -13,6 +13,7 @@ namespace nGrpc.Worker
     public class Program
     {
         public static IServiceProvider ServiceProviderForTests;
+        public static bool ServerIsReady;
 
         public static void Main(string[] args)
         {
@@ -45,10 +46,8 @@ namespace nGrpc.Worker
                 webBuilder.UseStartup<Startup>()
                 .UseKestrel((context, options) =>
                 {
-                    options.Limits.MaxConcurrentConnections = 100;
-
-                    var kc = new KestrelConfigs();
-                    context.Configuration.Bind("KestrelConfigs", kc);
+                    var kc = options.ApplicationServices.GetRequiredService<KestrelConfigs>();
+                    options.Limits.MaxConcurrentConnections = kc.MaxConcurrentConnections;
                     options.Listen(IPAddress.Parse(kc.Host), kc.Port);
 
                     Console.WriteLine($"Kestrel is listening on: http://{kc.Host}:{kc.Port}");
