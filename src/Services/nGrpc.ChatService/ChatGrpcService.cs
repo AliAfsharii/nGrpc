@@ -4,6 +4,7 @@ using nGrpc.Common;
 using nGrpc.Common.Descriptors;
 using nGrpc.ServerCommon;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace nGrpc.ChatService
@@ -51,12 +52,14 @@ namespace nGrpc.ChatService
 
         public void AddRpcMethods(IGrpcBuilderAdapter grpcBuilder)
         {
-            grpcBuilder.AddMethod(ChatGrpcDescriptors.JoinRoomDesc, JoinRoomRpc);
+            grpcBuilder.AddMethod(ChatGrpcDescriptors.JoinRoomDesc, JoinRoomRPC);
             grpcBuilder.AddMethod(ChatGrpcDescriptors.SendChatDesc, SendChatRPC);
+            grpcBuilder.AddMethod(ChatGrpcDescriptors.LeaveRoomDesc, LeaveRoomRPC);
+            grpcBuilder.AddMethod(ChatGrpcDescriptors.GetLastChatsDesc, GetLastChatsRPC);
         }
 
 
-        public async Task<JoinRoomRes> JoinRoomRpc(JoinRoomReq req, ServerCallContext context)
+        public async Task<JoinRoomRes> JoinRoomRPC(JoinRoomReq req, ServerCallContext context)
         {
             int playerId = context.GetPlayerCredential().PlayerId;
             string roomName = req.RoomName;
@@ -77,6 +80,32 @@ namespace nGrpc.ChatService
             _logger.LogInformation("SendChatRPC, PlayerId:{pi}, RoomName:{rn}, Text:{txt}", playerId, roomName, text);
 
             return new SendChatRes();
+        }
+
+        public async Task<LeaveRoomRes> LeaveRoomRPC(LeaveRoomReq req, ServerCallContext context)
+        {
+            int playerId = context.GetPlayerCredential().PlayerId;
+            string roomName = req.RoomName;
+
+            _chatHub.LeaveRoom(playerId, roomName);
+            _logger.LogInformation("LeaveRoomRPC, PlayerId:{pi}, RoomName:{rn}", playerId, roomName);
+
+            return new LeaveRoomRes();
+        }
+
+        public async Task<GetLastChatsRes> GetLastChatsRPC(GetLastChatsReq req, ServerCallContext context)
+        {
+            int playerId = context.GetPlayerCredential().PlayerId;
+            string roomName = req.RoomName;
+            int lastChatId = req.LastChatId;
+
+            List<ChatMessage> chatMessages = _chatHub.GetLastChats(playerId, roomName, lastChatId);
+            _logger.LogInformation("GetLastChatsRPC, PlayerId:{pi}, RoomName:{rn}, LastChatId:{lci}", playerId, roomName, lastChatId);
+
+            return new GetLastChatsRes
+            {
+                ChatMessages = chatMessages
+            };
         }
     }
 }

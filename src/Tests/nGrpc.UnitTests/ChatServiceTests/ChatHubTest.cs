@@ -7,6 +7,7 @@ using nGrpc.Common;
 using System.Collections.Generic;
 using System;
 using Microsoft.Extensions.Logging;
+using System.Linq;
 
 namespace nGrpc.UnitTests.ChatServiceTests
 {
@@ -146,6 +147,34 @@ namespace nGrpc.UnitTests.ChatServiceTests
             // then
             Assert.NotNull(lastChats);
             Assert.Equal(chatConfigs.ChatGetLastChatsCount, lastChats.Count);
+            Assert.Equal($"{chatText}_9", lastChats.Last().Text);
+        }
+
+        [Fact]
+        public void GIVEN_ChatHub_With_Multiple_SentChats_WHEN_Call_GetLatestChats_With_LastChatId_8_THEN_It_Should_Return_2_Last_Chats()
+        {
+            // given
+            ChatHub chatHub = _chatHub;
+            IPubSubHub pubSubHub = _pubSubHub;
+            ChatConfigs chatConfigs = _chatConfigs;
+
+            chatConfigs.ChatGetLastChatsCount = 4;
+            int playerId = 784;
+            string roomName = "dnxcvbx";
+            chatHub.JoinRoom(playerId, roomName);
+            string chatText = "askdgh dshfa";
+            int sentChatsCount = 10;
+            for (int i = 0; i < sentChatsCount; i++)
+                chatHub.SendChat(playerId, roomName, chatText + $"_{i}");
+
+            // when
+            int lastChatId = 8;
+            List<ChatMessage> lastChats = chatHub.GetLastChats(playerId, roomName, lastChatId);
+
+            // then
+            Assert.NotNull(lastChats);
+            Assert.Equal(2, lastChats.Count);
+            Assert.Equal($"{chatText}_9", lastChats.Last().Text);
         }
 
         [Fact]

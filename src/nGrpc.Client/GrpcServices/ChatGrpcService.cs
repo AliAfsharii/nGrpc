@@ -39,5 +39,17 @@ namespace nGrpc.Client.GrpcServices
             var res = await _grpcChannel.CallRpc(ChatGrpcDescriptors.SendChatDesc, req);
             return res;
         }
+
+        public async Task<LeaveRoomRes> LeaveRoomRPC(LeaveRoomReq req)
+        {
+            var res = await _grpcChannel.CallRpc(ChatGrpcDescriptors.LeaveRoomDesc, req);
+            return res;
+        }
+
+        public async Task<GetLastChatsRes> GetLastChatsRPC(GetLastChatsReq req)
+        {
+            var res = await _grpcChannel.CallRpc(ChatGrpcDescriptors.GetLastChatsDesc, req);
+            return res;
+        }
     }
 }

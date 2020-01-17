@@ -1,4 +1,6 @@
-﻿namespace nGrpc.Common
+﻿using System.Collections.Generic;
+
+namespace nGrpc.Common
 {
     public class JoinRoomReq
     {
@@ -17,5 +19,24 @@
     public class SendChatRes
     {
 
+    }
+
+    public class LeaveRoomReq
+    {
+        public string RoomName { get; set; }
+    }
+    public class LeaveRoomRes
+    {
+
+    }
+
+    public class GetLastChatsReq
+    {
+        public string RoomName { get; set; }
+        public int LastChatId { get; set; }
+    }
+    public class GetLastChatsRes
+    {
+        public List<ChatMessage> ChatMessages { get; set; }
     }
 }

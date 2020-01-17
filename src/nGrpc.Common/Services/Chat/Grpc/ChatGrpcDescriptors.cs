@@ -10,7 +10,13 @@ namespace nGrpc.Common.Descriptors
             GrpcUtils.CreateMethodDescriptor<JoinRoomReq, JoinRoomRes>(MethodType.Unary, ServiceName, "JoinRoom");
 
         public static Method<SendChatReq, SendChatRes> SendChatDesc =
-           GrpcUtils.CreateMethodDescriptor<SendChatReq, SendChatRes>(MethodType.Unary, ServiceName, "SendChat");
+            GrpcUtils.CreateMethodDescriptor<SendChatReq, SendChatRes>(MethodType.Unary, ServiceName, "SendChat");
+
+        public static Method<LeaveRoomReq, LeaveRoomRes> LeaveRoomDesc =
+            GrpcUtils.CreateMethodDescriptor<LeaveRoomReq, LeaveRoomRes>(MethodType.Unary, ServiceName, "LeaveRoom");
+
+        public static Method<GetLastChatsReq, GetLastChatsRes> GetLastChatsDesc =
+            GrpcUtils.CreateMethodDescriptor<GetLastChatsReq, GetLastChatsRes>(MethodType.Unary, ServiceName, "GetLastChats");
 
     }
 }

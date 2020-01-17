@@ -143,7 +143,7 @@ namespace nGrpc.ChatService
 
         public List<ChatMessage> GetLatestChatMessages(int playerId, int lastChatId)
         {
-            return _chatMessages.Where(n => n.Id > lastChatId).Take(_chatConfigs.ChatGetLastChatsCount).ToList();
+            return _chatMessages.Where(n => n.Id > lastChatId).TakeLast(_chatConfigs.ChatGetLastChatsCount).ToList();
         }
     }
 }
