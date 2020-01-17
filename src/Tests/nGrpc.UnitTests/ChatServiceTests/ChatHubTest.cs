@@ -173,5 +173,22 @@ namespace nGrpc.UnitTests.ChatServiceTests
             Assert.NotNull(exception);
             Assert.IsType<PlayerHasNotJoinedToChatRoomException>(exception);
         }
+
+        [Fact]
+        public void GIVEN_ChatHub_With_A_Joined_Player_WHEN_LeaveRoom_And_Call_IsPlayerJoined_THEN_It_Should_Return_False()
+        {
+            // given
+            ChatHub chatHub = _chatHub;
+            int playerId = 46345;
+            string roomName = "sfgfsfg";
+            chatHub.JoinRoom(playerId, roomName);
+
+            // when
+            chatHub.LeaveRoom(playerId, roomName);
+            bool b = chatHub.IsPlayerJoined(playerId, roomName);
+
+            // then
+            Assert.False(b);
+        }
     }
 }

@@ -57,6 +57,12 @@ namespace nGrpc.ChatService
             chatRoom.AddPlayer(playerId);
         }
 
+        public void LeaveRoom(int playerId, string roomName)
+        {
+            ChatRoom chatRoom = GetOrAddChatRoom(roomName);
+            chatRoom.RemovePlayer(playerId);
+        }
+
         public bool IsPlayerJoined(int playerId, string roomName)
         {
             bool res = false;

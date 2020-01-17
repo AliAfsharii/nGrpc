@@ -106,6 +106,12 @@ namespace nGrpc.ChatService
                     _playersIds.Add(playerId);
         }
 
+        public void RemovePlayer(int playerId)
+        {
+            using (_asyncLock.Lock())
+                _playersIds.Remove(playerId);
+        }
+
         public bool IsPlayerInRoom(int playerId)
         {
             using (_asyncLock.Lock())
