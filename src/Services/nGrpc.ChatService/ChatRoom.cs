@@ -12,50 +12,48 @@ namespace nGrpc.ChatService
     public class ChatRoom
     {
         private string _roomName;
-        public string RoomName
-        {
-            get
-            {
-                return _roomName;
-            }
-            set
-            {
-                if (_roomName == null)
-                    _roomName = value;
-                else
-                    throw new Exception("RoomName has set earlier");
-            }
-        }
 
         private readonly ILogger<ChatRoom> _logger;
-        private readonly DateTime _createDate;
         private readonly ITime _time;
         private readonly ChatConfigs _chatConfigs;
         private readonly IChatRepository _chatRepository;
         private readonly IPubSubHub _pubSubHub;
         private readonly AsyncLock _asyncLock = new AsyncLock();
         private readonly List<int> _playersIds = new List<int>();
-        private readonly List<ChatMessage> _chatMessages = new List<ChatMessage>();
+        private List<ChatMessage> _chatMessages;
 
         private int _lastChatId = 0;
         private int _lastSavedChatId;
 
         public ChatRoom(ILogger<ChatRoom> logger,
+            string roomName,
             ITime time,
             ChatConfigs chatConfigs,
             IChatRepository chatRepository,
             IPubSubHub pubSubHub)
         {
             _logger = logger;
+            _roomName = roomName;
             _time = time;
-            _createDate = _time.UTCTime;
             _chatConfigs = chatConfigs;
             _chatRepository = chatRepository;
             _pubSubHub = pubSubHub;
 
+            InitializeChatRoom().GetAwaiter().GetResult();
             Scheduler().NoAwait();
         }
 
+
+        private async Task InitializeChatRoom()
+        {
+            _chatMessages = await _chatRepository.GetLastChatMessages(_roomName, _chatConfigs.ChatGetLastChatsCount);
+            if (_chatMessages.Count > 0)
+            {
+                int lastChatMessageId = _chatMessages.Last().Id;
+                _lastChatId = lastChatMessageId;
+                _lastSavedChatId = lastChatMessageId;
+            }
+        }
 
         private async Task Scheduler()
         {
@@ -79,9 +77,9 @@ namespace nGrpc.ChatService
         {
             using (_asyncLock.Lock())
             {
-                if (_chatMessages.Count > _chatConfigs.ChatGetLatestChatsCount)
+                if (_chatMessages.Count > _chatConfigs.ChatGetLastChatsCount)
                 {
-                    int redundantChatsCount = _chatMessages.Count - _chatConfigs.ChatGetLatestChatsCount;
+                    int redundantChatsCount = _chatMessages.Count - _chatConfigs.ChatGetLastChatsCount;
                     _chatMessages.RemoveRange(0, redundantChatsCount);
                 }
             }
@@ -107,12 +105,6 @@ namespace nGrpc.ChatService
                 if (_playersIds.Contains(playerId) == false)
                     _playersIds.Add(playerId);
         }
-
-        //public List<int> GetPlayersIds()
-        //{
-        //    using (_asyncLock.Lock())
-        //        return _playersIds.CloneByMessagePack();
-        //}
 
         public bool IsPlayerInRoom(int playerId)
         {
@@ -144,7 +136,7 @@ namespace nGrpc.ChatService
 
         public List<ChatMessage> GetLatestChatMessages(int playerId, int lastChatId)
         {
-            return _chatMessages.Where(n => n.Id > lastChatId).Take(_chatConfigs.ChatGetLatestChatsCount).ToList();
+            return _chatMessages.Where(n => n.Id > lastChatId).Take(_chatConfigs.ChatGetLastChatsCount).ToList();
         }
     }
 }

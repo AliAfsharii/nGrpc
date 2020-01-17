@@ -2,15 +2,14 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace nGrpc.ChatService
 {
     public partial class ChatHub
     {
-        private readonly Func<ChatRoom> _chatRoomFactory;
+        private readonly Func<string, ChatRoom> _chatRoomFactory;
 
-        public ChatHub(Func<ChatRoom> chatRoomFactory)
+        public ChatHub(Func<string, ChatRoom> chatRoomFactory)
         {
             _chatRoomFactory = chatRoomFactory;
         }
@@ -30,8 +29,7 @@ namespace nGrpc.ChatService
                 {
                     if (_roomNameToRoomClass.TryGetValue(roomName, out chatRoom) == false)
                     {
-                        chatRoom = _chatRoomFactory();
-                        chatRoom.RoomName = roomName;
+                        chatRoom = _chatRoomFactory(roomName);
                         _roomNameToRoomClass.TryAdd(roomName, chatRoom);
                     }
                 }
@@ -53,7 +51,7 @@ namespace nGrpc.ChatService
 
         // public
 
-        public void Join(int playerId, string roomName)
+        public void JoinRoom(int playerId, string roomName)
         {
             ChatRoom chatRoom = GetOrAddChatRoom(roomName);
             chatRoom.AddPlayer(playerId);
@@ -68,13 +66,13 @@ namespace nGrpc.ChatService
             return res;
         }
 
-        public async Task SendChat(int playerId, string roomName, string text)
+        public void SendChat(int playerId, string roomName, string text)
         {
             ChatRoom chatRoom = GetChatRoom(playerId, roomName);
             chatRoom.AddChatMessage(playerId, text);
         }
 
-        public async Task<List<ChatMessage>> GetLastChats(int playerId, string roomName, int lastChatId)
+        public List<ChatMessage> GetLastChats(int playerId, string roomName, int lastChatId)
         {
             ChatRoom chatRoom = GetChatRoom(playerId, roomName);
             return chatRoom.GetLatestChatMessages(playerId, lastChatId);

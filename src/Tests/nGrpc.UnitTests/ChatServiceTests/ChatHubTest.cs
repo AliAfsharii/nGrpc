@@ -16,25 +16,26 @@ namespace nGrpc.UnitTests.ChatServiceTests
         IPubSubHub _pubSubHub;
         ChatConfigs _chatConfigs = new ChatConfigs
         {
-            ChatGetLatestChatsCount = 5,
+            ChatGetLastChatsCount = 5,
             ChatSaveIntervalInMilisec = 10 * 1000
         };
         ITime _time;
+        IChatRepository _chatRepository;
 
         public ChatHubTest()
         {
             _pubSubHub = Substitute.For<IPubSubHub>();
             _time = Substitute.For<ITime>();
-            ChatRoom chatRoomFactory() => CreateChatRoom();
+            _chatRepository = Substitute.For<IChatRepository>();
+            _chatRepository.GetLastChatMessages(Arg.Any<string>(), Arg.Any<int>()).Returns(x => new List<ChatMessage>());
+            ChatRoom chatRoomFactory(string roomName) => CreateChatRoom(roomName);
             _chatHub = new ChatHub(chatRoomFactory);
         }
 
-        ChatRoom CreateChatRoom()
+        ChatRoom CreateChatRoom(string roomName)
         {
-            ILogger<ChatRoom> logger = Substitute.For<ILogger<ChatRoom>>();     
-            IChatRepository chatRepository = Substitute.For<IChatRepository>();
-
-            return new ChatRoom(logger, _time, _chatConfigs, chatRepository, _pubSubHub);
+            ILogger<ChatRoom> logger = Substitute.For<ILogger<ChatRoom>>();
+            return new ChatRoom(logger, roomName, _time, _chatConfigs, _chatRepository, _pubSubHub);
         }
 
 
@@ -47,7 +48,7 @@ namespace nGrpc.UnitTests.ChatServiceTests
             string roomName = "sfgfsfg";
 
             // when
-            chatHub.Join(playerId, roomName);
+            chatHub.JoinRoom(playerId, roomName);
             bool b = chatHub.IsPlayerJoined(playerId, roomName);
 
             // then
@@ -70,7 +71,7 @@ namespace nGrpc.UnitTests.ChatServiceTests
         }
 
         [Fact]
-        public async Task GIVEN_ChatHub_With_A_Joined_Player_WHEN_Call_SendChat_THEN_PubSubHub_Publish_Should_Be_Called_Once()
+        public void GIVEN_ChatHub_With_A_Joined_Player_WHEN_Call_SendChat_THEN_PubSubHub_Publish_Should_Be_Called_Once()
         {
             // given
             ChatHub chatHub = _chatHub;
@@ -79,11 +80,11 @@ namespace nGrpc.UnitTests.ChatServiceTests
 
             int playerId = 784;
             string roomName = "wertwe";
-            chatHub.Join(playerId, roomName);
+            chatHub.JoinRoom(playerId, roomName);
             string chatText = "askdgh dshfa";
 
             // when
-            await chatHub.SendChat(playerId, roomName, chatText);
+            chatHub.SendChat(playerId, roomName, chatText);
 
             // then
             ChatSentMessage chatSentMessage = new ChatSentMessage
@@ -102,7 +103,7 @@ namespace nGrpc.UnitTests.ChatServiceTests
         }
 
         [Fact]
-        public async Task GIVEN_ChatHub_Without_Joined_Player_WHEN_Call_SendChat_THEN_It_Should_Throw_PlayerHasNotJoinedToChatRoomException()
+        public void GIVEN_ChatHub_Without_Joined_Player_WHEN_Call_SendChat_THEN_It_Should_Throw_PlayerHasNotJoinedToChatRoomException()
         {
             // given
             ChatHub chatHub = _chatHub;
@@ -114,7 +115,7 @@ namespace nGrpc.UnitTests.ChatServiceTests
             string chatText = "askdgh dshfa";
 
             // when
-            Exception exception = await Record.ExceptionAsync(() => chatHub.SendChat(playerId, roomName, chatText));
+            Exception exception = Record.Exception(() => chatHub.SendChat(playerId, roomName, chatText));
 
             // then
             Assert.NotNull(exception);
@@ -122,51 +123,51 @@ namespace nGrpc.UnitTests.ChatServiceTests
         }
 
         [Fact]
-        public async Task GIVEN_ChatHub_With_Multiple_SentChats_WHEN_Call_GetLatestChats_THEN_It_Should_Return_N_SentChats_And_N_Is_In_Configs_chatGetLatestChatsCount()
+        public void GIVEN_ChatHub_With_Multiple_SentChats_WHEN_Call_GetLatestChats_THEN_It_Should_Return_N_SentChats_And_N_Is_In_Configs_chatGetLatestChatsCount()
         {
             // given
             ChatHub chatHub = _chatHub;
             IPubSubHub pubSubHub = _pubSubHub;
             ChatConfigs chatConfigs = _chatConfigs;
 
-            chatConfigs.ChatGetLatestChatsCount = 4;
+            chatConfigs.ChatGetLastChatsCount = 4;
             int playerId = 784;
             string roomName = "dnxcvbx";
-            chatHub.Join(playerId, roomName);
+            chatHub.JoinRoom(playerId, roomName);
             string chatText = "askdgh dshfa";
             int sentChatsCount = 10;
             for (int i = 0; i < sentChatsCount; i++)
-                await chatHub.SendChat(playerId, roomName, chatText + $"_{i}");
+                chatHub.SendChat(playerId, roomName, chatText + $"_{i}");
 
             // when
             int lastChatId = 4;
-            List<ChatMessage> lastChats = await chatHub.GetLastChats(playerId, roomName, lastChatId);
+            List<ChatMessage> lastChats = chatHub.GetLastChats(playerId, roomName, lastChatId);
 
             // then
             Assert.NotNull(lastChats);
-            Assert.Equal(chatConfigs.ChatGetLatestChatsCount, lastChats.Count);
+            Assert.Equal(chatConfigs.ChatGetLastChatsCount, lastChats.Count);
         }
 
         [Fact]
-        public async Task GIVEN_ChatHub_With_Multiple_SentChats_WHEN_Call_GetLatestChats_With_WrongPlayerId_THEN_It_Should_Throw_PlayerHasNotJoinedToChatRoomException()
+        public void GIVEN_ChatHub_With_Multiple_SentChats_WHEN_Call_GetLatestChats_With_WrongPlayerId_THEN_It_Should_Throw_PlayerHasNotJoinedToChatRoomException()
         {
             // given
             ChatHub chatHub = _chatHub;
             IPubSubHub pubSubHub = _pubSubHub;
             ChatConfigs chatConfigs = _chatConfigs;
 
-            chatConfigs.ChatGetLatestChatsCount = 4;
+            chatConfigs.ChatGetLastChatsCount = 4;
             int playerId = 784;
             string roomName = "dnxcvbx";
-            chatHub.Join(playerId, roomName);
+            chatHub.JoinRoom(playerId, roomName);
             string chatText = "askdgh dshfa";
             int sentChatsCount = 10;
             for (int i = 0; i < sentChatsCount; i++)
-                await chatHub.SendChat(playerId, roomName, chatText + $"_{i}");
+                chatHub.SendChat(playerId, roomName, chatText + $"_{i}");
 
             // when
             int lastChatId = 4;
-            Exception exception = await Record.ExceptionAsync(() => chatHub.GetLastChats(playerId + 1, roomName, lastChatId));
+            Exception exception = Record.Exception(() => chatHub.GetLastChats(playerId + 1, roomName, lastChatId));
 
             // then
             Assert.NotNull(exception);

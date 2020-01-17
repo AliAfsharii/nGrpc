@@ -2,7 +2,7 @@
 {
     public class ChatConfigs
     {
-        public int ChatGetLatestChatsCount { get; set; }
+        public int ChatGetLastChatsCount { get; set; }
         public int ChatSaveIntervalInMilisec { get; set; }
     }
 }
