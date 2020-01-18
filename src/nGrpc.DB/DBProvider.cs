@@ -27,5 +27,10 @@ namespace nGrpc.DB
         {
             return new NpgsqlConnection(_connectionString);
         }
+
+        public string GetConnectionString()
+        {
+            return _connectionString;
+        }
     }
 }

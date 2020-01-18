@@ -44,7 +44,9 @@ namespace nGrpc.Worker
             Program.ServiceProviderForTests = serviceProvider;
 
             var logLevelConfig = serviceProvider.GetRequiredService<LogLevelConfigs>();
-            SerilogUtils.AddSerilog("", logLevelConfig);
+            IDBProvider dBProvider = serviceProvider.GetRequiredService<IDBProvider>();
+
+            SerilogUtils.AddSerilog(dBProvider.GetConnectionString(), logLevelConfig);
 
             if (env.IsDevelopment())
             {
