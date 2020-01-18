@@ -12,9 +12,8 @@ namespace nGrpc.ChatService
 {
     public class ChatRoom
     {
-        private string _roomName;
-
         private readonly ILogger<ChatRoom> _logger;
+        private readonly string _roomName;
         private readonly ITime _time;
         private readonly ChatConfigs _chatConfigs;
         private readonly IChatRepository _chatRepository;

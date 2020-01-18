@@ -46,6 +46,8 @@ namespace nGrpc.IntegrationTest
                     }
 
                     _isServerRunning = true;
+
+                    IntegrationTestServerExtender.ServerInitializer(ServiceProvider);
                 }
         }
 

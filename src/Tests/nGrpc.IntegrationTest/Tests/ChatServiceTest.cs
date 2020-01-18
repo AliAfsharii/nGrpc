@@ -56,7 +56,7 @@ namespace nGrpc.IntegrationTest
         {
             (GrpcChannel grpcChannel, LoginRes loginRes) = await TestUtils.GetNewLoginedChannel();
             ChatGrpcService chatGrpcService = new ChatGrpcService(grpcChannel);
-            string roomName = "fdgasdg";
+            string roomName = "fgsdfakudyk";
             await chatGrpcService.JoinRoomRPC(new JoinRoomReq { RoomName = roomName });
 
             await chatGrpcService.LeaveRoomRPC(new LeaveRoomReq { RoomName = roomName });
@@ -75,7 +75,7 @@ namespace nGrpc.IntegrationTest
         {
             (GrpcChannel grpcChannel, LoginRes loginRes) = await TestUtils.GetNewLoginedChannel();
             ChatGrpcService chatGrpcService = new ChatGrpcService(grpcChannel);
-            string roomName = "fdgasdg";
+            string roomName = "mnbzxcgvuas";
             string chatText = "uidyfisdfnasdhguiu";
             await chatGrpcService.JoinRoomRPC(new JoinRoomReq { RoomName = roomName });
 

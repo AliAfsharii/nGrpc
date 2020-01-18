@@ -5,6 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="DB Migration\%4020200118.0500.CreateChatMessagesTable.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="DB Migration\@20200118.0500.CreateChatMessagesTable.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\nGrpc.Common\nGrpc.Common.csproj" />
     <ProjectReference Include="..\..\nGrpc.ServerCommon\nGrpc.ServerCommon.csproj" />
   </ItemGroup>
