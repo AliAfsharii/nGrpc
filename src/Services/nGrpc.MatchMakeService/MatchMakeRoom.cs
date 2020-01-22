@@ -1,7 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using nGrpc.Common;
 using nGrpc.ServerCommon;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace nGrpc.MatchMakeService
@@ -11,6 +14,14 @@ namespace nGrpc.MatchMakeService
         private readonly ILogger<MatchMakeRoom> _logger;
         private readonly IPubSubHub _pubSubHub;
         private readonly ISessionsManager _sessionsManager;
+        private int _lastOrder;
+        class RoomPlayer
+        {
+            public int Order { get; set; }
+            public MatchMakePlayer MatchMakePlayer { get; set; }
+        }
+
+        ConcurrentDictionary<int, RoomPlayer> _joinedPlayers = new ConcurrentDictionary<int, RoomPlayer>();
 
         public MatchMakeRoom(ILogger<MatchMakeRoom> logger,
             IPubSubHub pubSubHub,
@@ -21,19 +32,36 @@ namespace nGrpc.MatchMakeService
             _sessionsManager = sessionsManager;
         }
 
+
+        private List<MatchMakePlayer> GetRoomPlayersInOrder()
+        {
+            List<MatchMakePlayer> matchMakePlayers = _joinedPlayers.Values
+                .OrderBy(n => n.Order)
+                .Select(n => n.MatchMakePlayer)
+                .ToList();
+
+            return matchMakePlayers;
+        }
+
+
         public async Task Join(int playerId)
         {
             PlayerData playerData = _sessionsManager.GetPlayerData(playerId);
+            RoomPlayer roomPlayer = new RoomPlayer
+            {
+                Order = Interlocked.Increment(ref _lastOrder),
+                MatchMakePlayer = new MatchMakePlayer
+                {
+                    Id = playerId,
+                    Name = playerData.Name
+                }
+            };
+
+            _joinedPlayers.TryAdd(playerId, roomPlayer);
+
             var message = new MatchMakeRoomUpdatedMessage
             {
-                MatchMakePlayers = new List<MatchMakePlayer>
-                {
-                    new MatchMakePlayer
-                    {
-                        Id = playerId,
-                        Name = playerData.Name
-                    }
-                }
+                MatchMakePlayers = GetRoomPlayersInOrder()
             };
             _pubSubHub.Publish(message);
         }
