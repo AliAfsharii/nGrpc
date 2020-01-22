@@ -7,6 +7,7 @@ namespace nGrpc.Common
         public int Id { get; set; }
         public Guid SecretKey { get; set; }
         public DateTime RegisterDate { get; set; }
+        public string Name { get; set; }
         public string CustomData { get; set; }
     }
 }
