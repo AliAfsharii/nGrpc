@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace nGrpc.MatchMakeService
+﻿namespace nGrpc.MatchMakeService
 {
     public class MatchMakePlayer
     {

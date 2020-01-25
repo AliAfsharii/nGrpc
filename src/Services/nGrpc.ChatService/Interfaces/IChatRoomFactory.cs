@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace nGrpc.ChatService.Interfaces
+﻿namespace nGrpc.ChatService.Interfaces
 {
     public interface IChatRoomFactory
     {

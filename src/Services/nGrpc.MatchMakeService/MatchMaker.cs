@@ -1,5 +1,6 @@
 ﻿using nGrpc.Common;
 using nGrpc.ServerCommon;
+using Nito.AsyncEx;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,18 +11,17 @@ namespace nGrpc.MatchMakeService
 {
     public class MatchMaker
     {
-        private MatchMakeConfigs _matchMakeConfigs;
         private readonly ISessionsManager _sessionsManager;
         private readonly IRoomCreator _roomCreator;
 
-        ConcurrentDictionary<int, IRoom> _rooms = new ConcurrentDictionary<int, IRoom>();
+        IRoom _openRoom;
         int _lastRoomId = 0;
+        AsyncLock _asyncLock = new AsyncLock();
 
-        public MatchMaker(MatchMakeConfigs matchMakeConfigs,
+        public MatchMaker(
             ISessionsManager sessionsManager,
             IRoomCreator roomCreator)
         {
-            _matchMakeConfigs = matchMakeConfigs;
             _sessionsManager = sessionsManager;
             _roomCreator = roomCreator;
         }
@@ -35,19 +35,27 @@ namespace nGrpc.MatchMakeService
 
         public async Task<List<MatchMakePlayer>> MatchMake(int playerId)
         {
-            IRoom room;
-            if (_rooms.Count == 0)
+            using (await _asyncLock.LockAsync())
             {
-                room = _roomCreator.CreateRoom();
-                int roomId = Interlocked.Increment(ref _lastRoomId);
-                _rooms.TryAdd(roomId, room);
-            }
-            else
-                room = _rooms.Values.First();
+                IRoom room;
+                int roomId;
+                if (_openRoom == null)
+                {
+                    room = _roomCreator.CreateRoom();
+                    roomId = Interlocked.Increment(ref _lastRoomId);
+                    _openRoom = room;
+                }
+                else
+                    room = _openRoom;
 
-            PlayerData playerData = _sessionsManager.GetPlayerData(playerId);
-            (List<MatchMakePlayer> players, bool isRoomClosed) = await room.Join(playerId, playerData.Name);
-            return players;
+                PlayerData playerData = _sessionsManager.GetPlayerData(playerId);
+                (List<MatchMakePlayer> players, bool isRoomClosed) = await room.Join(playerId, playerData.Name);
+
+                if (isRoomClosed == true)
+                    _openRoom = null;
+
+                return players;
+            }
         }
     }
 }

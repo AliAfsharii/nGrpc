@@ -1,11 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
-using nGrpc.Common;
-using nGrpc.MatchMakeService;
-using nGrpc.ServerCommon;
-using NSubstitute;
+﻿using nGrpc.MatchMakeService;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 

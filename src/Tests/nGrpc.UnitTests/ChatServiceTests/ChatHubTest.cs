@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Xunit;
+﻿using Xunit;
 using nGrpc.ChatService;
 using nGrpc.ServerCommon;
 using NSubstitute;
