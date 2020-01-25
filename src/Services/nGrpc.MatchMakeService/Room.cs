@@ -1,9 +1,7 @@
 ﻿using Nito.AsyncEx;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace nGrpc.MatchMakeService
 {
@@ -17,7 +15,7 @@ namespace nGrpc.MatchMakeService
             public MatchMakePlayer MatchMakePlayer { get; set; }
         }
 
-        ConcurrentDictionary<int, RoomPlayer> _joinedPlayers = new ConcurrentDictionary<int, RoomPlayer>();
+        Dictionary<int, RoomPlayer> _joinedPlayers = new Dictionary<int, RoomPlayer>();
         int _lastFilledPosition;
         bool _roomIsClosed = false;
         AsyncLock _asyncLock = new AsyncLock();
@@ -63,9 +61,9 @@ namespace nGrpc.MatchMakeService
 
         // public
 
-        public async Task<(List<MatchMakePlayer> players, bool isRoomClosed)> Join(int playerId, string playerName)
+        public (List<MatchMakePlayer> players, bool isRoomClosed) Join(int playerId, string playerName)
         {
-            using (await _asyncLock.LockAsync())
+            using (_asyncLock.Lock())
             {
                 if (IsPlayerInRoom(playerId) == true)
                     throw new PlayerIsAlreadyInRoomException($"PlayerId:{playerId}");
@@ -73,7 +71,7 @@ namespace nGrpc.MatchMakeService
                     throw new RoomIsClosedException();
 
                 RoomPlayer roomPlayer = CreateRoomPlayer(playerId, playerName);
-                _joinedPlayers.TryAdd(playerId, roomPlayer);
+                _joinedPlayers.Add(playerId, roomPlayer);
 
                 if (_joinedPlayers.Count == _matchMakeConfigs.RoomCapacity)
                     _roomIsClosed = true;
@@ -82,16 +80,24 @@ namespace nGrpc.MatchMakeService
             }
         }
 
-        public async Task<List<MatchMakePlayer>> Leave(int playerId)
+        public List<MatchMakePlayer> Leave(int playerId)
         {
-            using (await _asyncLock.LockAsync())
+            using (_asyncLock.Lock())
             {
                 if (IsPlayerInRoom(playerId) == false)
                     throw new PlayerIsNotInRoomException($"PlayerId:{playerId}");
 
-                _joinedPlayers.TryRemove(playerId, out _);
+                _joinedPlayers.Remove(playerId);
 
                 return GetRoomPlayersInOrder();
+            }
+        }
+
+        public List<int> GetPlayers()
+        {
+            using(_asyncLock.Lock())
+            {
+                return GetRoomPlayersInOrder().Select(n => n.Id).ToList();
             }
         }
     }

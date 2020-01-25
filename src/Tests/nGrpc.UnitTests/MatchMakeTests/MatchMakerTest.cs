@@ -14,12 +14,14 @@ namespace nGrpc.UnitTests.MatchMakeTests
         MatchMakeConfigs _matchMakeConfigs = new MatchMakeConfigs { RoomCapacity = 2 };
         ISessionsManager _sessionsManager;
         IRoomCreator _roomCreator;
+        IMatchProvider _matchProvider;
 
         public MatchMakerTest()
         {
             _sessionsManager = Substitute.For<ISessionsManager>();
             _roomCreator = Substitute.For<IRoomCreator>();
-            _matchMaker = new MatchMaker(_sessionsManager, _roomCreator);
+            _matchProvider = Substitute.For<IMatchProvider>();
+            _matchMaker = new MatchMaker(_sessionsManager, _roomCreator, _matchProvider);
         }
 
 
@@ -41,7 +43,7 @@ namespace nGrpc.UnitTests.MatchMakeTests
             roomCreator.CreateRoom().Returns(room);
 
             // when
-            List<MatchMakePlayer> players = await matchMaker.MatchMake(playerId);
+            (List<MatchMakePlayer> players, _) = await matchMaker.MatchMake(playerId);
 
             // then
             roomCreator.Received(1).CreateRoom();
@@ -49,7 +51,7 @@ namespace nGrpc.UnitTests.MatchMakeTests
         }
 
         [Fact]
-        public async Task GIVEN_MatchMaker_WHEN_Call_MatchMake_For_Two_Players_THEN_It_Should_Put_First_And_Second_Players_To_TheSame_Room()
+        public async Task GIVEN_MatchMaker_WHEN_Call_MatchMake_For_Two_Players_THEN_It_Should_Put_Players_To_TheSame_Room()
         {
             // given
             MatchMaker matchMaker = _matchMaker;
@@ -71,8 +73,8 @@ namespace nGrpc.UnitTests.MatchMakeTests
 
             // then
             roomCreator.Received(1).CreateRoom();
-            await room.Received(1).Join(playerId1, null);
-            await room.Received(1).Join(playerId2, null);
+            room.Received(1).Join(playerId1, null);
+            room.Received(1).Join(playerId2, null);
         }
 
         [Fact]
@@ -105,8 +107,60 @@ namespace nGrpc.UnitTests.MatchMakeTests
 
             // then
             roomCreator.Received(2).CreateRoom();
-            await room1.Received(1).Join(playerId1, null);
-            await room2.Received(1).Join(playerId2, null);
+            room1.Received(1).Join(playerId1, null);
+            room2.Received(1).Join(playerId2, null);
+        }
+
+        [Fact]
+        public async Task GIVEN_MatchMaker_WHEN_Call_MatchMake_And_Room_Get_Closed_THEN_It_Should_Return_A_MatchId()
+        {
+            // given
+            MatchMaker matchMaker = _matchMaker;
+
+            ISessionsManager sessionsManager = _sessionsManager;
+            int playerId = 6846;
+            sessionsManager.GetPlayerData(playerId).Returns(new PlayerData { });
+
+            IRoomCreator roomCreator = _roomCreator;
+            IRoom room = Substitute.For<IRoom>();
+            room.Join(playerId, null).Returns((null, true));
+            roomCreator.CreateRoom().Returns(room);
+
+            IMatchProvider matchProvider = _matchProvider;
+            int expectedMatchId = 783403423;
+            matchProvider.CreateMatch(Arg.Any<List<int>>()).Returns(expectedMatchId);
+
+            // when
+            (_, int? matchId) = await matchMaker.MatchMake(playerId);
+
+            // then
+            Assert.Equal(expectedMatchId, matchId);
+        }
+
+        [Fact]
+        public async Task GIVEN_MatchMaker_With_An_OpenRoom_WHEN_Call_Leave_THEN_Room_Leave_Should_Be_Called_Once()
+        {
+            // given
+            MatchMaker matchMaker = _matchMaker;
+
+            ISessionsManager sessionsManager = _sessionsManager;
+            int playerId = 53732;
+            sessionsManager.GetPlayerData(playerId).Returns(new PlayerData { });
+
+            IRoomCreator roomCreator = _roomCreator;
+            IRoom room = Substitute.For<IRoom>();
+            List<MatchMakePlayer> expectedMatchMakePlayers = new List<MatchMakePlayer>();
+            room.Leave(playerId).Returns(expectedMatchMakePlayers);
+            roomCreator.CreateRoom().Returns(room);
+
+            await matchMaker.MatchMake(playerId);
+
+            // when
+            List<MatchMakePlayer> players = await matchMaker.Leave(playerId);
+
+            // then
+            room.Received(1).Leave(playerId);
+            Assert.StrictEqual(expectedMatchMakePlayers, players);
         }
     }
 }
