@@ -11,21 +11,21 @@ using Xunit;
 
 namespace nGrpc.UnitTests.MatchMakeTests
 {
-    public class MatchMakeRoomTest
+    public class RoomTest
     {
-        MatchMakeRoom _matchMakeRoom;
+        Room _matchMakeRoom;
         MatchMakeConfigs _matchMakeConfigs = new MatchMakeConfigs();
 
-        public MatchMakeRoomTest()
+        public RoomTest()
         {
-            _matchMakeRoom = new MatchMakeRoom(_matchMakeConfigs);
+            _matchMakeRoom = new Room(_matchMakeConfigs);
         }
 
         [Fact]
         public async Task GIVEN_MatchMakeRoom_WHEN_Call_Join_THEN_One_PlayerId_Should_Be_In_Returned_Players()
         {
             // given
-            MatchMakeRoom matchMakeRoom = _matchMakeRoom;
+            Room matchMakeRoom = _matchMakeRoom;
             int playerId = 68464;
             string playerName = "asdfhsdsadf";
 
@@ -44,7 +44,7 @@ namespace nGrpc.UnitTests.MatchMakeTests
         public async Task GIVEN_MatchMakeRoom_WHEN_Call_Join_With_Two_Different_PlayerId_THEN_Two_PlayerId_Should_Be_In_Returned_Players()
         {
             // given
-            MatchMakeRoom matchMakeRoom = _matchMakeRoom;
+            Room matchMakeRoom = _matchMakeRoom;
             int playerId1 = 564;
             string playerName1 = "ghdfwr";
             int playerId2 = 45632;
@@ -69,7 +69,7 @@ namespace nGrpc.UnitTests.MatchMakeTests
         public async Task GIVEN_MatchMakeRoom_With_A_Joined_Player_WHEN_Call_Join_With_TheSame_Player_THEN_It_Should_Throw_PlayerIsAlreadyInRoomException()
         {
             // given
-            MatchMakeRoom matchMakeRoom = _matchMakeRoom;
+            Room matchMakeRoom = _matchMakeRoom;
             int playerId = 7846;
             await matchMakeRoom.Join(playerId, "");
 
@@ -85,15 +85,10 @@ namespace nGrpc.UnitTests.MatchMakeTests
         public async Task GIVEN_MatchMakeRoom_WHEN_Make_Room_Full_THEN_RoomIsClosed_Should_Be_True()
         {
             // given
-            MatchMakeRoom matchMakeRoom = _matchMakeRoom;
+            Room matchMakeRoom = _matchMakeRoom;
             int playerId = 345;
             MatchMakeConfigs matchMakeConfigs = _matchMakeConfigs;
             matchMakeConfigs.RoomCapacity = 2;
-
-            //int matchId = 984658743;
-            //IMatchProvider matchProvider = _matchProvider;
-            //List<int> playerIds = Enumerable.Range(0, matchMakeConfigs.RoomCapacity).Select(n => playerId + n).ToList();
-            //matchProvider.CreateMatch(Arg.Is<List<int>>(l => l.ToJson() == playerIds.ToJson())).Returns(matchId);
 
             // when
             for (int i = 0; i < matchMakeConfigs.RoomCapacity - 1; i++)
@@ -108,7 +103,7 @@ namespace nGrpc.UnitTests.MatchMakeTests
         public async Task GIVEN_MatchMakeRoom_Full_Of_Players_WHEN_Call_Join_With_New_PlayerId_THEN_It_Should_Throw_RoomIsClosedException()
         {
             // given
-            MatchMakeRoom matchMakeRoom = _matchMakeRoom;
+            Room matchMakeRoom = _matchMakeRoom;
             int playerId = 6584;
             MatchMakeConfigs matchMakeConfigs = _matchMakeConfigs;
             matchMakeConfigs.RoomCapacity = 2;
@@ -127,7 +122,7 @@ namespace nGrpc.UnitTests.MatchMakeTests
         public async Task GIVEN_MatchMakeRoom_With_A_Player_WHEN_Call_Leave_With_The_PlayerId_THEN_PlayerId_Should_Not_Be_In_Returned_Players()
         {
             // given
-            MatchMakeRoom matchMakeRoom = _matchMakeRoom;
+            Room matchMakeRoom = _matchMakeRoom;
             int playerId = 7956;
             await matchMakeRoom.Join(playerId, "");
 
@@ -142,7 +137,7 @@ namespace nGrpc.UnitTests.MatchMakeTests
         public async Task GIVEN_MatchMakeRoom_With_A_Player_WHEN_Call_Leave_With_Wrong_PlayerId_THEN_It_Should_Throw_PlayerIsNotInRoomException()
         {
             // given
-            MatchMakeRoom matchMakeRoom = _matchMakeRoom;
+            Room matchMakeRoom = _matchMakeRoom;
             int playerId = 7956;
             await matchMakeRoom.Join(playerId, "");
 

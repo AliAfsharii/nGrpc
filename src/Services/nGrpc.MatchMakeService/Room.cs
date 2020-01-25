@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using nGrpc.ServerCommon;
-using Nito.AsyncEx;
-using System;
+﻿using Nito.AsyncEx;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace nGrpc.MatchMakeService
 {
-    public class MatchMakeRoom
+    public class Room : IRoom
     {
         private readonly MatchMakeConfigs _matchMakeConfigs;
 
@@ -26,8 +23,7 @@ namespace nGrpc.MatchMakeService
         AsyncLock _asyncLock = new AsyncLock();
 
 
-        public MatchMakeRoom(
-            MatchMakeConfigs matchMakeConfigs)
+        public Room(MatchMakeConfigs matchMakeConfigs)
         {
             _matchMakeConfigs = matchMakeConfigs;
         }
@@ -64,24 +60,6 @@ namespace nGrpc.MatchMakeService
             };
         }
 
-        //private void PublishRoomClosedMessage(int matchId)
-        //{
-        //    var closeMessage = new MatchMakeRoomClosedMessage
-        //    {
-        //        MatchId = matchId
-        //    };
-        //    _pubSubHub.Publish(closeMessage);
-        //}
-
-        //private void PublishRoomUpdatedMessage()
-        //{
-        //    var updateMessage = new MatchMakeRoomUpdatedMessage
-        //    {
-        //        MatchMakePlayers = GetRoomPlayersInOrder()
-        //    };
-        //    _pubSubHub.Publish(updateMessage);
-        //}
-
 
         // public
 
@@ -98,13 +76,8 @@ namespace nGrpc.MatchMakeService
                 _joinedPlayers.TryAdd(playerId, roomPlayer);
 
                 if (_joinedPlayers.Count == _matchMakeConfigs.RoomCapacity)
-                {
                     _roomIsClosed = true;
-                    // int matchId = await _matchProvider.CreateMatch(_joinedPlayers.Keys.ToList());
-                    //PublishRoomClosedMessage(matchId);
-                }
 
-                //PublishRoomUpdatedMessage();
                 return (GetRoomPlayersInOrder(), _roomIsClosed);
             }
         }

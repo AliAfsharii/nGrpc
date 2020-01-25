@@ -2,7 +2,7 @@
 
 namespace nGrpc.MatchMakeService
 {
-    public class MatchMakeRoomUpdatedMessage
+    public class MatchMakeUpdatedMessage
     {
         public List<MatchMakePlayer> MatchMakePlayers { get; set; }
     }
