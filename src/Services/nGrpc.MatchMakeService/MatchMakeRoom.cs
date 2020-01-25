@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
-using nGrpc.Common;
 using nGrpc.ServerCommon;
 using Nito.AsyncEx;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +12,7 @@ namespace nGrpc.MatchMakeService
 {
     public class MatchMakeRoom
     {
-        private readonly ILogger<MatchMakeRoom> _logger;
-        private readonly IPubSubHub _pubSubHub;
         private readonly MatchMakeConfigs _matchMakeConfigs;
-        private readonly IMatchProvider _matchProvider;
 
         class RoomPlayer
         {
@@ -29,15 +26,10 @@ namespace nGrpc.MatchMakeService
         AsyncLock _asyncLock = new AsyncLock();
 
 
-        public MatchMakeRoom(ILogger<MatchMakeRoom> logger,
-            IPubSubHub pubSubHub,
-            MatchMakeConfigs matchMakeConfigs,
-            IMatchProvider matchProvider)
+        public MatchMakeRoom(
+            MatchMakeConfigs matchMakeConfigs)
         {
-            _logger = logger;
-            _pubSubHub = pubSubHub;
             _matchMakeConfigs = matchMakeConfigs;
-            _matchProvider = matchProvider;
         }
 
 
@@ -59,48 +51,74 @@ namespace nGrpc.MatchMakeService
             return _joinedPlayers.ContainsKey(playerId);
         }
 
+        private RoomPlayer CreateRoomPlayer(int playerId, string playerName)
+        {
+            return new RoomPlayer
+            {
+                PositionInRoom = Interlocked.Increment(ref _lastFilledPosition),
+                MatchMakePlayer = new MatchMakePlayer
+                {
+                    Id = playerId,
+                    Name = playerName
+                }
+            };
+        }
+
+        //private void PublishRoomClosedMessage(int matchId)
+        //{
+        //    var closeMessage = new MatchMakeRoomClosedMessage
+        //    {
+        //        MatchId = matchId
+        //    };
+        //    _pubSubHub.Publish(closeMessage);
+        //}
+
+        //private void PublishRoomUpdatedMessage()
+        //{
+        //    var updateMessage = new MatchMakeRoomUpdatedMessage
+        //    {
+        //        MatchMakePlayers = GetRoomPlayersInOrder()
+        //    };
+        //    _pubSubHub.Publish(updateMessage);
+        //}
 
 
         // public
 
-        public async Task Join(int playerId, string playerName)
+        public async Task<(List<MatchMakePlayer> players, bool isRoomClosed)> Join(int playerId, string playerName)
         {
             using (await _asyncLock.LockAsync())
             {
                 if (IsPlayerInRoom(playerId) == true)
                     throw new PlayerIsAlreadyInRoomException($"PlayerId:{playerId}");
-
                 if (_roomIsClosed == true)
                     throw new RoomIsClosedException();
 
-                RoomPlayer roomPlayer = new RoomPlayer
-                {
-                    PositionInRoom = Interlocked.Increment(ref _lastFilledPosition),
-                    MatchMakePlayer = new MatchMakePlayer
-                    {
-                        Id = playerId,
-                        Name = playerName
-                    }
-                };
-
+                RoomPlayer roomPlayer = CreateRoomPlayer(playerId, playerName);
                 _joinedPlayers.TryAdd(playerId, roomPlayer);
 
                 if (_joinedPlayers.Count == _matchMakeConfigs.RoomCapacity)
                 {
                     _roomIsClosed = true;
-
-                    var closeMessage = new MatchMakeRoomClosedMessage
-                    {
-                        MatchId = await _matchProvider.CreateMatch(_joinedPlayers.Keys.ToList())
-                    };
-                    _pubSubHub.Publish(closeMessage);
+                    // int matchId = await _matchProvider.CreateMatch(_joinedPlayers.Keys.ToList());
+                    //PublishRoomClosedMessage(matchId);
                 }
 
-                var updateMessage = new MatchMakeRoomUpdatedMessage
-                {
-                    MatchMakePlayers = GetRoomPlayersInOrder()
-                };
-                _pubSubHub.Publish(updateMessage);
+                //PublishRoomUpdatedMessage();
+                return (GetRoomPlayersInOrder(), _roomIsClosed);
+            }
+        }
+
+        public async Task<List<MatchMakePlayer>> Leave(int playerId)
+        {
+            using (await _asyncLock.LockAsync())
+            {
+                if (IsPlayerInRoom(playerId) == false)
+                    throw new PlayerIsNotInRoomException($"PlayerId:{playerId}");
+
+                _joinedPlayers.TryRemove(playerId, out _);
+
+                return GetRoomPlayersInOrder();
             }
         }
     }

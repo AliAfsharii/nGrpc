@@ -23,4 +23,15 @@ namespace nGrpc.MatchMakeService
         {
         }
     }
+
+    public class PlayerIsNotInRoomException : Exception
+    {
+        public PlayerIsNotInRoomException()
+        {
+        }
+
+        public PlayerIsNotInRoomException(string message) : base(message)
+        {
+        }
+    }
 }
