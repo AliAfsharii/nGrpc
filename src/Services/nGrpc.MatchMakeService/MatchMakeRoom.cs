@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using nGrpc.Common;
 using nGrpc.ServerCommon;
+using Nito.AsyncEx;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,57 +14,94 @@ namespace nGrpc.MatchMakeService
     {
         private readonly ILogger<MatchMakeRoom> _logger;
         private readonly IPubSubHub _pubSubHub;
-        private readonly ISessionsManager _sessionsManager;
-        private int _lastOrder;
+        private readonly MatchMakeConfigs _matchMakeConfigs;
+        private readonly IMatchProvider _matchProvider;
+
         class RoomPlayer
         {
-            public int Order { get; set; }
+            public int PositionInRoom { get; set; }
             public MatchMakePlayer MatchMakePlayer { get; set; }
         }
 
         ConcurrentDictionary<int, RoomPlayer> _joinedPlayers = new ConcurrentDictionary<int, RoomPlayer>();
+        int _lastFilledPosition;
+        bool _roomIsClosed = false;
+        AsyncLock _asyncLock = new AsyncLock();
+
 
         public MatchMakeRoom(ILogger<MatchMakeRoom> logger,
             IPubSubHub pubSubHub,
-            ISessionsManager sessionsManager)
+            MatchMakeConfigs matchMakeConfigs,
+            IMatchProvider matchProvider)
         {
             _logger = logger;
             _pubSubHub = pubSubHub;
-            _sessionsManager = sessionsManager;
+            _matchMakeConfigs = matchMakeConfigs;
+            _matchProvider = matchProvider;
         }
 
+
+
+        // private
 
         private List<MatchMakePlayer> GetRoomPlayersInOrder()
         {
             List<MatchMakePlayer> matchMakePlayers = _joinedPlayers.Values
-                .OrderBy(n => n.Order)
+                .OrderBy(n => n.PositionInRoom)
                 .Select(n => n.MatchMakePlayer)
                 .ToList();
 
             return matchMakePlayers;
         }
 
-
-        public async Task Join(int playerId)
+        private bool IsPlayerInRoom(int playerId)
         {
-            PlayerData playerData = _sessionsManager.GetPlayerData(playerId);
-            RoomPlayer roomPlayer = new RoomPlayer
+            return _joinedPlayers.ContainsKey(playerId);
+        }
+
+
+
+        // public
+
+        public async Task Join(int playerId, string playerName)
+        {
+            using (await _asyncLock.LockAsync())
             {
-                Order = Interlocked.Increment(ref _lastOrder),
-                MatchMakePlayer = new MatchMakePlayer
+                if (IsPlayerInRoom(playerId) == true)
+                    throw new PlayerIsAlreadyInRoomException($"PlayerId:{playerId}");
+
+                if (_roomIsClosed == true)
+                    throw new RoomIsClosedException();
+
+                RoomPlayer roomPlayer = new RoomPlayer
                 {
-                    Id = playerId,
-                    Name = playerData.Name
+                    PositionInRoom = Interlocked.Increment(ref _lastFilledPosition),
+                    MatchMakePlayer = new MatchMakePlayer
+                    {
+                        Id = playerId,
+                        Name = playerName
+                    }
+                };
+
+                _joinedPlayers.TryAdd(playerId, roomPlayer);
+
+                if (_joinedPlayers.Count == _matchMakeConfigs.RoomCapacity)
+                {
+                    _roomIsClosed = true;
+
+                    var closeMessage = new MatchMakeRoomClosedMessage
+                    {
+                        MatchId = await _matchProvider.CreateMatch(_joinedPlayers.Keys.ToList())
+                    };
+                    _pubSubHub.Publish(closeMessage);
                 }
-            };
 
-            _joinedPlayers.TryAdd(playerId, roomPlayer);
-
-            var message = new MatchMakeRoomUpdatedMessage
-            {
-                MatchMakePlayers = GetRoomPlayersInOrder()
-            };
-            _pubSubHub.Publish(message);
+                var updateMessage = new MatchMakeRoomUpdatedMessage
+                {
+                    MatchMakePlayers = GetRoomPlayersInOrder()
+                };
+                _pubSubHub.Publish(updateMessage);
+            }
         }
     }
 }
