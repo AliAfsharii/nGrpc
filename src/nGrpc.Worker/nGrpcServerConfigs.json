@@ -27,6 +27,9 @@
     "ChatGetLastChatsCount": 30,
     "ChatSaveIntervalInMilisec": 20000
   },
+  "MatchMakeConfigs": {
+    "RoomCapacity": 2
+  },
   "ModuleNames": [
     "nGrpc.Worker",
     "nGrpc.DB",
@@ -34,6 +37,7 @@
     "nGrpc.Session",
     "nGrpc.ServerCommon",
     "nGrpc.ProfileService",
-    "nGrpc.ChatService"
+    "nGrpc.ChatService",
+    "nGrpc.MatchMakeService"
   ]
 }

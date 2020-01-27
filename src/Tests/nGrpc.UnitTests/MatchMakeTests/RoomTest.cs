@@ -1,4 +1,5 @@
-﻿using nGrpc.MatchMakeService;
+﻿using nGrpc.Common;
+using nGrpc.MatchMakeService;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

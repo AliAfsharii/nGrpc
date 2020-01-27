@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using nGrpc.Client;
 using nGrpc.Client.GrpcServices;
@@ -38,6 +39,18 @@ namespace nGrpc.IntegrationTest
             };
             LoginRes loginRes = await baseProfileService.LoginRPC(req);
             return (grpcChannel, loginRes);
+        }
+
+        public static async Task WaitIfTrue(Func<bool> predicate, int timeout)
+        {
+            int checkPeriod = 10;
+            Task timeoutDelay = Task.Delay(timeout);
+
+            while (predicate() == true && timeoutDelay.IsCompleted == false)
+                await Task.Delay(checkPeriod);
+
+            if (timeoutDelay.IsCompleted == true)
+                throw new Exception("WaitIfTrue Timeout Exceeded.");
         }
     }
 }

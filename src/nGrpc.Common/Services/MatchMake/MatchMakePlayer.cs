@@ -1,4 +1,4 @@
-﻿namespace nGrpc.MatchMakeService
+﻿namespace nGrpc.Common
 {
     public class MatchMakePlayer
     {

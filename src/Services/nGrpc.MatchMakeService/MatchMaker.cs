@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace nGrpc.MatchMakeService
 {
-    public class MatchMaker
+    public class MatchMaker : IMatchMaker
     {
         private readonly ISessionsManager _sessionsManager;
         private readonly IRoomCreator _roomCreator;
@@ -61,9 +61,12 @@ namespace nGrpc.MatchMakeService
 
         public async Task<List<MatchMakePlayer>> Leave(int playerId)
         {
-            using(await _asyncLock.LockAsync())
+            using (await _asyncLock.LockAsync())
             {
-                List<MatchMakePlayer> matchMakePlayers = _openRoom?.Leave(playerId);
+                if (_openRoom == null)
+                    throw new ThereIsNoOpenRoomException($"PlayerId:{playerId}");
+
+                List<MatchMakePlayer> matchMakePlayers = _openRoom.Leave(playerId);
                 return matchMakePlayers;
             }
         }

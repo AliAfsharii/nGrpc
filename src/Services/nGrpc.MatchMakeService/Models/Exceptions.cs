@@ -34,4 +34,15 @@ namespace nGrpc.MatchMakeService
         {
         }
     }
+
+    public class ThereIsNoOpenRoomException : Exception
+    {
+        public ThereIsNoOpenRoomException()
+        {
+        }
+
+        public ThereIsNoOpenRoomException(string message) : base(message)
+        {
+        }
+    }
 }

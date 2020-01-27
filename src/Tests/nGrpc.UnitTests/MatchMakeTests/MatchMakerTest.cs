@@ -2,6 +2,7 @@
 using nGrpc.MatchMakeService;
 using nGrpc.ServerCommon;
 using NSubstitute;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
@@ -160,6 +161,21 @@ namespace nGrpc.UnitTests.MatchMakeTests
             // then
             room.Received(1).Leave(playerId);
             Assert.StrictEqual(expectedMatchMakePlayers, players);
+        }
+
+        [Fact]
+        public async Task GIVEN_MatchMaker_With_No_Room_WHEN_Call_Leave_THEN_It_Should_Throw_ThereIsNoOpenRoomException()
+        {
+            // given
+            MatchMaker matchMaker = _matchMaker;
+            int playerId = 34532;
+
+            // when
+            Exception exception = await Record.ExceptionAsync(() => matchMaker.Leave(playerId));
+
+            // then
+            Assert.NotNull(exception);
+            Assert.IsType<ThereIsNoOpenRoomException>(exception);
         }
     }
 }
