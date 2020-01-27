@@ -20,6 +20,7 @@
     <ProjectReference Include="..\..\Services\nGrpc.ChatService\nGrpc.ChatService.csproj" />
     <ProjectReference Include="..\..\Services\nGrpc.MatchMakeService\nGrpc.MatchMakeService.csproj" />
     <ProjectReference Include="..\..\Services\nGrpc.ProfileService\nGrpc.ProfileService.csproj" />
+    <ProjectReference Include="..\..\Services\nGrpc.ReversiGameService\nGrpc.ReversiGameService.csproj" />
   </ItemGroup>
 
 </Project>
