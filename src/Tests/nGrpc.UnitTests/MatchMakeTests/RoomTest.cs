@@ -9,7 +9,10 @@ namespace nGrpc.UnitTests.MatchMakeTests
     public class RoomTest
     {
         Room _matchMakeRoom;
-        MatchMakeConfigs _matchMakeConfigs = new MatchMakeConfigs();
+        MatchMakeConfigs _matchMakeConfigs = new MatchMakeConfigs
+        {
+            RoomCapacity = 2
+        };
 
         public RoomTest()
         {
@@ -50,7 +53,7 @@ namespace nGrpc.UnitTests.MatchMakeTests
             (List<MatchMakePlayer> players, bool isRoomclosed) = matchMakeRoom.Join(playerId2, playerName2);
 
             // then
-            Assert.False(isRoomclosed);
+            Assert.True(isRoomclosed);
             Assert.Equal(2, players.Count);
             var p1 = players[0];
             Assert.Equal(playerId1, p1.Id);
@@ -83,7 +86,6 @@ namespace nGrpc.UnitTests.MatchMakeTests
             Room matchMakeRoom = _matchMakeRoom;
             int playerId = 345;
             MatchMakeConfigs matchMakeConfigs = _matchMakeConfigs;
-            matchMakeConfigs.RoomCapacity = 2;
 
             // when
             for (int i = 0; i < matchMakeConfigs.RoomCapacity - 1; i++)
@@ -100,9 +102,7 @@ namespace nGrpc.UnitTests.MatchMakeTests
             // given
             Room matchMakeRoom = _matchMakeRoom;
             int playerId = 6584;
-            MatchMakeConfigs matchMakeConfigs = _matchMakeConfigs;
-            matchMakeConfigs.RoomCapacity = 2;
-            for (int i = 0; i < matchMakeConfigs.RoomCapacity; i++)
+            for (int i = 0; i < _matchMakeConfigs.RoomCapacity; i++)
                 matchMakeRoom.Join(playerId + i, "");
 
             // when
@@ -142,6 +142,23 @@ namespace nGrpc.UnitTests.MatchMakeTests
             // then
             Assert.NotNull(exception);
             Assert.IsType<PlayerIsNotInRoomException>(exception);
+        }
+
+        [Fact]
+        public void GIVEN_Closed_MatchMakeRoom_With_A_Player_WHEN_Call_Leave_THEN_It_Should_Throw_RoomIsClosedException()
+        {
+            // given
+            Room matchMakeRoom = _matchMakeRoom;
+            int playerId = 7956;
+            matchMakeRoom.Join(playerId, "");
+            matchMakeRoom.Join(playerId + 1, "");
+
+            // when
+            Exception exception = Record.Exception(() => matchMakeRoom.Leave(playerId));
+
+            // then
+            Assert.NotNull(exception);
+            Assert.IsType<RoomIsClosedException>(exception);
         }
 
         [Fact]

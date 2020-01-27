@@ -11,7 +11,6 @@ namespace nGrpc.UnitTests.MatchMakeTests
     public class MatchMakerTest
     {
         MatchMaker _matchMaker;
-        MatchMakeConfigs _matchMakeConfigs = new MatchMakeConfigs { RoomCapacity = 2 };
         ISessionsManager _sessionsManager;
         IRoomCreator _roomCreator;
         IMatchProvider _matchProvider;

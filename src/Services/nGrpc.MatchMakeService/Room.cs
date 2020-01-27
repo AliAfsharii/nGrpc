@@ -73,7 +73,7 @@ namespace nGrpc.MatchMakeService
                 RoomPlayer roomPlayer = CreateRoomPlayer(playerId, playerName);
                 _joinedPlayers.Add(playerId, roomPlayer);
 
-                if (_joinedPlayers.Count == _matchMakeConfigs.RoomCapacity)
+                if (_joinedPlayers.Count >= _matchMakeConfigs.RoomCapacity)
                     _roomIsClosed = true;
 
                 return (GetRoomPlayersInOrder(), _roomIsClosed);
@@ -86,6 +86,8 @@ namespace nGrpc.MatchMakeService
             {
                 if (IsPlayerInRoom(playerId) == false)
                     throw new PlayerIsNotInRoomException($"PlayerId:{playerId}");
+                if (_roomIsClosed == true)
+                    throw new RoomIsClosedException();
 
                 _joinedPlayers.Remove(playerId);
 
