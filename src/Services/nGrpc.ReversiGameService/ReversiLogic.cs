@@ -102,6 +102,10 @@ namespace nGrpc.ReversiGameService
             return b;
         }
 
+        void ChangeTurn()
+        {
+            _turnPlayerId = _turnPlayerId == _playerId1 ? _playerId2 : _playerId1;
+        }
 
 
         //public
@@ -113,10 +117,15 @@ namespace nGrpc.ReversiGameService
 
         public ReversiGameData PutDisk(int playerId, int row, int col)
         {
+            if (playerId != _turnPlayerId)
+                throw new WrongPlayerIdException($"PlayerId:{playerId}, ExpectedPlayerId:{_turnPlayerId}");
+
             ReversiCellColor playerColor = GetPlayerColor(playerId);
             bool b = CalculateNewMove(playerColor, row, col);
             if (b == false)
                 throw new DiskOnWrongPositionException($"PlayerId:{playerId}, Row:{row}, Col:{col}");
+
+            ChangeTurn();
 
             return CreateGameData();
         }

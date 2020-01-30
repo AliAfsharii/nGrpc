@@ -215,7 +215,7 @@ namespace nGrpc.UnitTests.ReversiGameTests
             // given
             ReversiLogic reversiLogic = _reversiLogic;
             reversiLogic.PutDisk(_playerId1, 3, 5);
-            reversiLogic.PutDisk(_playerId1, 4, 5);
+            reversiLogic.PutDisk(_playerId2, 4, 5);
 
             int playerId = _playerId1;
             int row = 5;
@@ -252,6 +252,21 @@ namespace nGrpc.UnitTests.ReversiGameTests
             // then
             Assert.NotNull(exception);
             Assert.IsType<DiskOnWrongPositionException>(exception);
+        }
+
+        [Fact]
+        public void GIVEN_ReversiLogic_WHEN_Call_PutDisk_With_WrongPlayerId_THEN_It_Should_Throw_WrongPlayerIdException()
+        {
+            // given
+            ReversiLogic reversiLogic = _reversiLogic;
+            int wrongPlayerId = _playerId1 + _playerId2;
+
+            // when
+            Exception exception = Record.Exception(() => reversiLogic.PutDisk(wrongPlayerId, 0, 0));
+
+            // then
+            Assert.NotNull(exception);
+            Assert.IsType<WrongPlayerIdException>(exception);
         }
     }
 }

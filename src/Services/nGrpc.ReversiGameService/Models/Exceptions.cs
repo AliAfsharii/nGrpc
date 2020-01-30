@@ -12,4 +12,15 @@ namespace nGrpc.ReversiGameService
         {
         }
     }
+
+    public class WrongPlayerIdException : Exception
+    {
+        public WrongPlayerIdException()
+        {
+        }
+
+        public WrongPlayerIdException(string message) : base(message)
+        {
+        }
+    }
 }
