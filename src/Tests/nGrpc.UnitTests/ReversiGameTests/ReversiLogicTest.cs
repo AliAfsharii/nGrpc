@@ -34,12 +34,12 @@ namespace nGrpc.UnitTests.ReversiGameTests
             Assert.Equal(_playerName2, gameData.PlayerName2);
             Assert.Equal(_playerId1, gameData.TurnPlayerId);
 
-            ReversiCellState[,] expectedCellStates = new ReversiCellState[8, 8];
-            expectedCellStates[4, 4] = ReversiCellState.White;
-            expectedCellStates[4, 5] = ReversiCellState.Black;
-            expectedCellStates[5, 4] = ReversiCellState.Black;
-            expectedCellStates[5, 5] = ReversiCellState.White;
-            Assert.Equal(expectedCellStates.ToJson(), gameData.CellStates.ToJson());
+            ReversiCellColor[,] expectedCellStates = new ReversiCellColor[8, 8];
+            expectedCellStates[3, 3] = ReversiCellColor.White;
+            expectedCellStates[3, 4] = ReversiCellColor.Black;
+            expectedCellStates[4, 3] = ReversiCellColor.Black;
+            expectedCellStates[4, 4] = ReversiCellColor.White;
+            Assert.Equal(expectedCellStates.ToJson(), gameData.CellColors.ToJson());
         }
 
         [Fact]
@@ -48,20 +48,20 @@ namespace nGrpc.UnitTests.ReversiGameTests
             // given
             ReversiLogic reversiLogic = _reversiLogic;
             int playerId = _playerId1;
-            int rowNum = 4;
-            int colNum = 6;
+            int rowNum = 3;
+            int colNum = 5;
 
             // when
             ReversiGameData gameData = reversiLogic.PutDisk(playerId, rowNum, colNum);
 
             // then
-            ReversiCellState[,] expectedCellStates = new ReversiCellState[8, 8];
-            expectedCellStates[4, 4] = ReversiCellState.White;
-            expectedCellStates[4, 5] = ReversiCellState.White;
-            expectedCellStates[5, 4] = ReversiCellState.Black;
-            expectedCellStates[5, 5] = ReversiCellState.White;
-            expectedCellStates[4, 6] = ReversiCellState.White;
-            Assert.Equal(expectedCellStates.ToJson(), gameData.CellStates.ToJson());
+            ReversiCellColor[,] expectedCellStates = new ReversiCellColor[8, 8];
+            expectedCellStates[3, 3] = ReversiCellColor.White;
+            expectedCellStates[3, 4] = ReversiCellColor.White;
+            expectedCellStates[4, 3] = ReversiCellColor.Black;
+            expectedCellStates[4, 4] = ReversiCellColor.White;
+            expectedCellStates[3, 5] = ReversiCellColor.White;
+            Assert.Equal(expectedCellStates.ToJson(), gameData.CellColors.ToJson());
         }
     }
 }

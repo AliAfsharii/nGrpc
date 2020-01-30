@@ -1,6 +1,6 @@
 ﻿namespace nGrpc.ReversiGameService
 {
-    public enum ReversiCellState
+    public enum ReversiCellColor
     {
         Empty = 0,
         Black,
@@ -15,7 +15,7 @@
         public string PlayerName1 { get; set; }
         public int PlayerId2 { get; set; }
         public string PlayerName2 { get; set; }
-        public ReversiCellState[,] CellStates { get; set; }
+        public ReversiCellColor[,] CellColors { get; set; }
         public int TurnPlayerId { get; set; }
     }
 }

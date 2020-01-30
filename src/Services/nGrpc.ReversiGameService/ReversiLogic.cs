@@ -1,5 +1,6 @@
 ﻿using nGrpc.ServerCommon;
 using System;
+using System.Collections.Generic;
 
 namespace nGrpc.ReversiGameService
 {
@@ -9,7 +10,7 @@ namespace nGrpc.ReversiGameService
         private readonly string _playerName1;
         private readonly int _playerId2;
         private readonly string _playerName2;
-        private readonly ReversiCellState[,] _cellStates;
+        private readonly ReversiCellColor[,] _cellColors;
         private int _turnPlayerId;
 
         public ReversiLogic(int playerId1, string playerName1, int playerId2, string playerName2)
@@ -19,11 +20,11 @@ namespace nGrpc.ReversiGameService
             _playerId2 = playerId2;
             _playerName2 = playerName2;
 
-            _cellStates = new ReversiCellState[8, 8];
-            _cellStates[4, 4] = ReversiCellState.White;
-            _cellStates[4, 5] = ReversiCellState.Black;
-            _cellStates[5, 4] = ReversiCellState.Black;
-            _cellStates[5, 5] = ReversiCellState.White;
+            _cellColors = new ReversiCellColor[8, 8];
+            _cellColors[3, 3] = ReversiCellColor.White;
+            _cellColors[3, 4] = ReversiCellColor.Black;
+            _cellColors[4, 3] = ReversiCellColor.Black;
+            _cellColors[4, 4] = ReversiCellColor.White;
 
             _turnPlayerId = playerId1;
         }
@@ -39,16 +40,52 @@ namespace nGrpc.ReversiGameService
                 PlayerName1 = _playerName1,
                 PlayerId2 = _playerId2,
                 PlayerName2 = _playerName2,
-                CellStates = _cellStates.CloneByMessagePack(),
+                CellColors = _cellColors.CloneByMessagePack(),
                 TurnPlayerId = _playerId1
             };
             return gameData;
         }
 
-        private ReversiCellState GetPlayerColor(int playerId)
+        private ReversiCellColor GetPlayerColor(int playerId)
         {
-            return playerId == _playerId1 ? ReversiCellState.White : ReversiCellState.Black;
+            return playerId == _playerId1 ? ReversiCellColor.White : ReversiCellColor.Black;
         }
+
+        private ReversiCellColor GetOppositeColor(ReversiCellColor color)
+        {
+            if (color == ReversiCellColor.Empty)
+                throw new Exception("Empty does not have opposite color.");
+            return color == ReversiCellColor.White ? ReversiCellColor.Black : ReversiCellColor.White;
+        }
+
+
+        private void CalculateNewMove(ReversiCellColor newDiskColor, int rowNum, int colNum)
+        {
+            _cellColors[rowNum, colNum] = newDiskColor;
+            ReversiCellColor oppositeColor = GetOppositeColor(newDiskColor);
+
+            // check left cells\
+            bool b = false;
+            List<(int row, int col)> list = new List<(int row, int col)>();
+            for (int i = colNum - 1; i >= 0; i--)
+            {
+                if (_cellColors[rowNum, i] == newDiskColor)
+                {
+                    b = true;
+                    break;
+                }
+                if (_cellColors[rowNum, i] == ReversiCellColor.Empty)
+                    break;
+
+                list.Add((rowNum, i));
+            }
+
+            if (b == true)
+                foreach ((int x, int y) in list)
+                    _cellColors[x, y] = newDiskColor;
+        }
+
+
 
         //public
 
@@ -59,10 +96,8 @@ namespace nGrpc.ReversiGameService
 
         public ReversiGameData PutDisk(int playerId, int rowNum, int colNum)
         {
-            ReversiCellState playerColor = GetPlayerColor(playerId);
-            _cellStates[rowNum, colNum] = playerColor;
-
-
+            ReversiCellColor playerColor = GetPlayerColor(playerId);
+            CalculateNewMove(playerColor, rowNum, colNum);
             return CreateGameData();
         }
 
