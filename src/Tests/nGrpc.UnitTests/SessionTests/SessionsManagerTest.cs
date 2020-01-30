@@ -16,20 +16,20 @@ namespace nGrpc.UnitTests.SessionTests
         IProfileRepository _profileRepository;
         PlayerData _playerData;
 
-        TimerMock _timerMock;
+        ITimer _timer;
         SessionConfigs _sessionConfigs;
 
         public SessionsManagerTest()
         {
             ITimerProvider timerProvider = Substitute.For<ITimerProvider>();
-            _timerMock = new TimerMock();
-            timerProvider.CreateTimer().Returns(_timerMock);
+            _timer = Substitute.For<ITimer>();
+            timerProvider.CreateTimer().Returns(_timer);
 
             _sessionConfigs = new SessionConfigs { TimeoutInMilisec = 35312 };
             _profileRepository = Substitute.For<IProfileRepository>();
 
             _sessionsManager = new SessionsManager(timerProvider, _sessionConfigs, _profileRepository);
-            _playerData = new PlayerData { Id = _playerId, SecretKey = Guid.NewGuid() };    
+            _playerData = new PlayerData { Id = _playerId, SecretKey = Guid.NewGuid() };
         }
 
 
@@ -58,11 +58,13 @@ namespace nGrpc.UnitTests.SessionTests
             ISessionsManager sessionsManager = _sessionsManager;
             int playerId = _playerId;
             PlayerData playerData = _playerData;
+            ITimer timer = _timer;
+            Action callback = null;
+            timer.When(x => x.SetCallback(Arg.Any<Action>())).Do(x => callback = x.ArgAt<Action>(0));
             sessionsManager.AddSession(playerData);
-            TimerMock timerMock = _timerMock;
 
             // when
-            timerMock.Callback();
+            callback();
 
             // then
             Exception exception = Record.Exception(() => sessionsManager.GetPlayerData(playerId));
@@ -76,14 +78,14 @@ namespace nGrpc.UnitTests.SessionTests
             // given
             ISessionsManager sessionsManager = _sessionsManager;
             PlayerData playerData = _playerData;
-            TimerMock timerMock = _timerMock;
+            ITimer timer = _timer;
             SessionConfigs sessionConfigs = _sessionConfigs;
 
             // when
             sessionsManager.AddSession(playerData);
 
             // then
-            timerMock.SpyTimer.Received(1).Change(sessionConfigs.TimeoutInMilisec, Timeout.Infinite);
+            timer.Received(1).Change(sessionConfigs.TimeoutInMilisec, Timeout.Infinite);
         }
 
         [Fact]
@@ -93,16 +95,16 @@ namespace nGrpc.UnitTests.SessionTests
             ISessionsManager sessionsManager = _sessionsManager;
             int playerId = _playerId;
             PlayerData playerData = _playerData;
-            TimerMock timerMock = _timerMock;
+            ITimer timer = _timer;
             SessionConfigs sessionConfigs = _sessionConfigs;
             sessionsManager.AddSession(playerData);
-            timerMock.SpyTimer.ClearReceivedCalls();
+            timer.ClearReceivedCalls();
 
             // when
             sessionsManager.ResetTimer(playerId);
 
             // then
-            timerMock.SpyTimer.Received(1).Change(sessionConfigs.TimeoutInMilisec, Timeout.Infinite);
+            timer.Received(1).Change(sessionConfigs.TimeoutInMilisec, Timeout.Infinite);
         }
 
         [Fact]
