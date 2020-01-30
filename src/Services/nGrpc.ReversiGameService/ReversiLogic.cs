@@ -1,6 +1,7 @@
 ﻿using nGrpc.ServerCommon;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace nGrpc.ReversiGameService
 {
@@ -59,30 +60,46 @@ namespace nGrpc.ReversiGameService
         }
 
 
-        private void CalculateNewMove(ReversiCellColor newDiskColor, int rowNum, int colNum)
+        private bool CalculateNewMove(ReversiCellColor newDiskColor, int row, int col)
         {
-            _cellColors[rowNum, colNum] = newDiskColor;
+            _cellColors[row, col] = newDiskColor;
             ReversiCellColor oppositeColor = GetOppositeColor(newDiskColor);
 
-            // check left cells\
+            List<bool> results = new List<bool>();
+            results.Add(CalculateDirection(newDiskColor, row, col, 0, -1)); // left
+            results.Add(CalculateDirection(newDiskColor, row, col, 0, 1)); // right
+            results.Add(CalculateDirection(newDiskColor, row, col, 1, 0)); // down
+            results.Add(CalculateDirection(newDiskColor, row, col, -1, 0)); // up
+            results.Add(CalculateDirection(newDiskColor, row, col, 1, 1)); // down right
+            results.Add(CalculateDirection(newDiskColor, row, col, 1, -1)); // down left
+            results.Add(CalculateDirection(newDiskColor, row, col, -1, -1)); // up left
+            results.Add(CalculateDirection(newDiskColor, row, col, -1, 1)); // up right
+
+            return results.Any(n => n == true);
+        }
+
+        private bool CalculateDirection(ReversiCellColor newDiskColor, int row, int col, int rowStep, int colStep)
+        {
             bool b = false;
             List<(int row, int col)> list = new List<(int row, int col)>();
-            for (int i = colNum - 1; i >= 0; i--)
+            for (int y = col + colStep, x = row + rowStep; (y >= 0 && y <= 7) && (x >= 0 && x <= 7); y += colStep, x += rowStep)
             {
-                if (_cellColors[rowNum, i] == newDiskColor)
+                if (_cellColors[x, y] == newDiskColor)
                 {
                     b = true;
                     break;
                 }
-                if (_cellColors[rowNum, i] == ReversiCellColor.Empty)
+                if (_cellColors[x, y] == ReversiCellColor.Empty)
                     break;
 
-                list.Add((rowNum, i));
+                list.Add((x, y));
             }
 
             if (b == true)
                 foreach ((int x, int y) in list)
                     _cellColors[x, y] = newDiskColor;
+
+            return b;
         }
 
 
@@ -94,10 +111,13 @@ namespace nGrpc.ReversiGameService
             return CreateGameData();
         }
 
-        public ReversiGameData PutDisk(int playerId, int rowNum, int colNum)
+        public ReversiGameData PutDisk(int playerId, int row, int col)
         {
             ReversiCellColor playerColor = GetPlayerColor(playerId);
-            CalculateNewMove(playerColor, rowNum, colNum);
+            bool b = CalculateNewMove(playerColor, row, col);
+            if (b == false)
+                throw new DiskOnWrongPositionException($"PlayerId:{playerId}, Row:{row}, Col:{col}");
+
             return CreateGameData();
         }
 
