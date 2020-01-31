@@ -14,6 +14,7 @@ namespace nGrpc.ReversiGameService
             services.AddSingleton<IReversiGamesManager, ReversiGamesManager>();
             services.AddSingleton<IMatchProvider>(sp => (ReversiGamesManager)sp.GetRequiredService<IReversiGamesManager>());
             services.AddSingleton<IReversiLogicCreator, ReversiLogicCreator>();
+            services.AddSingleton<IGrpcService, ReversiGameGrpcService>();
         }
 
         public System.Collections.Generic.List<(int priorityIndex, Func<Task> func)> Initializer(IServiceProvider serviceProvider)

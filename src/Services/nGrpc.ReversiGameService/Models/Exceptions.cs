@@ -34,4 +34,15 @@ namespace nGrpc.ReversiGameService
         {
         }
     }
+
+    public class CellIsFilledException : Exception
+    {
+        public CellIsFilledException()
+        {
+        }
+
+        public CellIsFilledException(string message) : base(message)
+        {
+        }
+    }
 }

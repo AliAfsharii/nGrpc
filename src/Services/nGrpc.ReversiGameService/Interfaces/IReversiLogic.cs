@@ -1,4 +1,6 @@
-﻿namespace nGrpc.ReversiGameService
+﻿using nGrpc.Common;
+
+namespace nGrpc.ReversiGameService
 {
     public interface IReversiLogic
     {

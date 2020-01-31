@@ -1,4 +1,5 @@
-﻿using nGrpc.ServerCommon;
+﻿using nGrpc.Common;
+using nGrpc.ServerCommon;
 using Nito.AsyncEx;
 using System;
 using System.Collections.Generic;
@@ -94,7 +95,6 @@ namespace nGrpc.ReversiGameService
 
         private bool CalculateNewMove(ReversiCellColor newDiskColor, int row, int col)
         {
-            _cellColors[row, col] = newDiskColor;
             ReversiCellColor oppositeColor = GetOppositeColor(newDiskColor);
 
             List<bool> results = new List<bool>();
@@ -107,7 +107,11 @@ namespace nGrpc.ReversiGameService
             results.Add(CalculateDirection(newDiskColor, row, col, -1, -1)); // up left
             results.Add(CalculateDirection(newDiskColor, row, col, -1, 1)); // up right
 
-            return results.Any(n => n == true);
+            bool b = results.Any(n => n == true);
+            if (b == true)
+                _cellColors[row, col] = newDiskColor;
+
+            return b;
         }
 
         private bool CalculateDirection(ReversiCellColor newDiskColor, int row, int col, int rowStep, int colStep)
@@ -131,7 +135,7 @@ namespace nGrpc.ReversiGameService
                 foreach ((int x, int y) in list)
                     _cellColors[x, y] = newDiskColor;
 
-            return b;
+            return b && list.Count > 0;
         }
 
         private void ChangeTurn()
@@ -159,6 +163,8 @@ namespace nGrpc.ReversiGameService
             {
                 if (playerId != _turnPlayerId)
                     throw new WrongPlayerIdException($"PlayerId:{playerId}, ExpectedPlayerId:{_turnPlayerId}");
+                if (_cellColors[row, col] != ReversiCellColor.Empty)
+                    throw new CellIsFilledException($"PlayerId:{playerId}, Row:{row}, Col:{col}");
 
                 ReversiCellColor playerColor = GetPlayerColor(playerId);
                 bool b = CalculateNewMove(playerColor, row, col);

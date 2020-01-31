@@ -1,4 +1,4 @@
-﻿namespace nGrpc.ReversiGameService
+﻿namespace nGrpc.Common
 {
     public enum ReversiCellColor
     {
@@ -6,8 +6,6 @@
         Black,
         White
     }
-
-
 
     public class ReversiGameData
     {

@@ -309,5 +309,22 @@ namespace nGrpc.UnitTests.ReversiGameTests
             ReversiGameData gameData = reversiLogic.GetGameData(_playerId1);
             Assert.Equal(_playerId2, gameData.TurnPlayerId);
         }
+
+        [Fact]
+        public void GIVEN_ReversiLogic_WHEN_Call_PutDisk_With_A_Filled_Position_THEN_It_Should_Throw_CellIsFilledException()
+        {
+            // given
+            ReversiLogic reversiLogic = _reversiLogic;
+            int playerId = _playerId1;
+            int row = 3;
+            int col = 3;
+
+            // when
+            Exception exception = Record.Exception(() => reversiLogic.PutDisk(playerId, row, col));
+
+            // then
+            Assert.NotNull(exception);
+            Assert.IsType<CellIsFilledException>(exception);
+        }
     }
 }
