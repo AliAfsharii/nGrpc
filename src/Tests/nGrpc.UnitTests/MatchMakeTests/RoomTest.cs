@@ -171,11 +171,11 @@ namespace nGrpc.UnitTests.MatchMakeTests
             matchMakeRoom.Join(playerId, "");
 
             // when
-            List<int> playerIds = matchMakeRoom.GetPlayers();
+            List<MatchMakePlayer> players = matchMakeRoom.GetPlayers();
 
             // then
-            Assert.Single(playerIds);
-            Assert.Equal(playerId, playerIds[0]);
+            Assert.Single(players);
+            Assert.Equal(playerId, players[0].Id);
         }
     }
 }

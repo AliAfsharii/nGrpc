@@ -128,7 +128,7 @@ namespace nGrpc.UnitTests.MatchMakeTests
 
             IMatchProvider matchProvider = _matchProvider;
             int expectedMatchId = 783403423;
-            matchProvider.CreateMatch(Arg.Any<List<int>>()).Returns(expectedMatchId);
+            matchProvider.CreateMatch(Arg.Any<List<MatchMakePlayer>>()).Returns(expectedMatchId);
 
             // when
             (_, int? matchId) = await matchMaker.MatchMake(playerId);

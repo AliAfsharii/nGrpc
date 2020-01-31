@@ -296,7 +296,7 @@ namespace nGrpc.UnitTests.ReversiGameTests
         }
 
         [Fact]
-        public async void GIVEN_ReversiLogic_WHEN_Call_Timer_Callback_THEN_Turn_Should_Be_Changed()
+        public void GIVEN_ReversiLogic_WHEN_Call_Timer_Callback_THEN_Turn_Should_Be_Changed()
         {
             // given
             ReversiLogic reversiLogic = _reversiLogic;

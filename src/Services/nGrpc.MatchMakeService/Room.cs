@@ -96,11 +96,11 @@ namespace nGrpc.MatchMakeService
             }
         }
 
-        public List<int> GetPlayers()
+        public List<MatchMakePlayer> GetPlayers()
         {
             using(_asyncLock.Lock())
             {
-                return GetRoomPlayersInOrder().Select(n => n.Id).ToList();
+                return GetRoomPlayersInOrder();
             }
         }
     }

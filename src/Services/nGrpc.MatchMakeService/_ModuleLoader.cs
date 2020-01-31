@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using nGrpc.Common;
 using nGrpc.ServerCommon;
 using System;
 using System.Collections.Generic;
@@ -21,9 +22,9 @@ namespace nGrpc.MatchMakeService
 
         public class temoMatchProcvider : IMatchProvider
         {
-            public async Task<int> CreateMatch(List<int> playerIds)
+            public async Task<int> CreateMatch(List<MatchMakePlayer> playerIds)
             {
-                return 1;
+                return 11;
             }
         }
 

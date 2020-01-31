@@ -7,6 +7,6 @@ namespace nGrpc.MatchMakeService
     {
         (List<MatchMakePlayer> players, bool isRoomClosed) Join(int playerId, string playerName);
         List<MatchMakePlayer> Leave(int playerId);
-        List<int> GetPlayers();
+        List<MatchMakePlayer> GetPlayers();
     }
 }
