@@ -30,6 +30,9 @@
   "MatchMakeConfigs": {
     "RoomCapacity": 2
   },
+  "ReversiGameConfigs": {
+    "TurnTimeInMilisec": 10000
+  },
   "ModuleNames": [
     "nGrpc.Worker",
     "nGrpc.DB",
@@ -38,6 +41,7 @@
     "nGrpc.ServerCommon",
     "nGrpc.ProfileService",
     "nGrpc.ChatService",
-    "nGrpc.MatchMakeService"
+    "nGrpc.MatchMakeService",
+    "nGrpc.ReversiGameService"
   ]
 }

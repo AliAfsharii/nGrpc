@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace nGrpc.ReversiGameService
 {
-    public class ReversiGamesManager : IMatchProvider
+    public class ReversiGamesManager : IMatchProvider, IReversiGamesManager
     {
         private readonly IReversiLogicCreator _reversiLogicCreator;
         private readonly ConcurrentDictionary<int, IReversiLogic> _logics = new ConcurrentDictionary<int, IReversiLogic>();
