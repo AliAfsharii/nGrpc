@@ -37,7 +37,7 @@ namespace nGrpc.UnitTests.ReversiGameTests
             ReversiLogic reversiLogic = _reversiLogic;
 
             // when
-            ReversiGameData gameData = reversiLogic.GetGameData();
+            ReversiGameData gameData = reversiLogic.GetGameData(_playerId1);
 
             // then
             Assert.NotNull(gameData);
@@ -306,7 +306,7 @@ namespace nGrpc.UnitTests.ReversiGameTests
             timerCallback();
 
             // then
-            ReversiGameData gameData = reversiLogic.GetGameData();
+            ReversiGameData gameData = reversiLogic.GetGameData(_playerId1);
             Assert.Equal(_playerId2, gameData.TurnPlayerId);
         }
     }

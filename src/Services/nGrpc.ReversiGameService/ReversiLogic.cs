@@ -60,7 +60,7 @@ namespace nGrpc.ReversiGameService
 
         private void TimerCallback()
         {
-            using(_asyncLock.Lock())
+            using (_asyncLock.Lock())
             {
                 ChangeTurn();
             }
@@ -143,10 +143,14 @@ namespace nGrpc.ReversiGameService
 
         //public
 
-        public ReversiGameData GetGameData()
+        public ReversiGameData GetGameData(int playerId)
         {
             using (_asyncLock.Lock())
+            {
+                if (playerId != _playerId1 && playerId != _playerId2)
+                    throw new WrongPlayerIdException($"PlayerId:{playerId}");
                 return CreateGameData();
+            }
         }
 
         public ReversiGameData PutDisk(int playerId, int row, int col)

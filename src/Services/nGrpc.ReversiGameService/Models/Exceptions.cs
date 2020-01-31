@@ -23,4 +23,15 @@ namespace nGrpc.ReversiGameService
         {
         }
     }
+
+    public class ThereIsNoSuchGameException : Exception
+    {
+        public ThereIsNoSuchGameException()
+        {
+        }
+
+        public ThereIsNoSuchGameException(string message) : base(message)
+        {
+        }
+    }
 }
