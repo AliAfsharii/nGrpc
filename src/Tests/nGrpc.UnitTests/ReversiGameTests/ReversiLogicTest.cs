@@ -2,6 +2,9 @@
 using Xunit;
 using nGrpc.Common;
 using System;
+using nGrpc.ServerCommon;
+using NSubstitute;
+using System.Threading;
 
 namespace nGrpc.UnitTests.ReversiGameTests
 {
@@ -12,10 +15,19 @@ namespace nGrpc.UnitTests.ReversiGameTests
         string _playerName1 = "fgsdfhf pjgc";
         int _playerId2 = 8356;
         string _playerName2 = "opduhbcvx vj sdg";
+        ITimer _timer;
+        ReversiGameConfigs _reversiGameConfigs = new ReversiGameConfigs
+        {
+            TurnTimeInMilisec = 1342345
+        };
+        Action _timerCallback;
 
         public ReversiLogicTest()
         {
-            _reversiLogic = new ReversiLogic(_playerId1, _playerName1, _playerId2, _playerName2);
+            _timer = Substitute.For<ITimer>();
+            _timer.When(x => x.SetCallback(Arg.Any<Action>())).Do(x => _timerCallback = x.ArgAt<Action>(0));
+
+            _reversiLogic = new ReversiLogic(_reversiGameConfigs, _timer, _playerId1, _playerName1, _playerId2, _playerName2);
         }
 
         [Fact]
@@ -208,7 +220,6 @@ namespace nGrpc.UnitTests.ReversiGameTests
             Assert.Equal(expectedCellStates.ToJson(), gameData.CellColors.ToJson());
         }
 
-
         [Fact]
         public void GIVEN_ReversiLogic_WHEN_Call_PutDisk_On_DownRight_Side_THEN_It_Should_Return_GameData_With_New_States()
         {
@@ -267,6 +278,36 @@ namespace nGrpc.UnitTests.ReversiGameTests
             // then
             Assert.NotNull(exception);
             Assert.IsType<WrongPlayerIdException>(exception);
+        }
+
+        [Fact]
+        public void GIVEN_ReversiLogic_THEN_Timer_SetCallAback_And_Change_Should_Be_Called_Once()
+        {
+            // given
+            ReversiLogic reversiLogic = _reversiLogic;
+            ITimer timer = _timer;
+            var config = _reversiGameConfigs;
+
+            // when
+
+            // then
+            timer.Received(1).SetCallback(Arg.Any<Action>());
+            timer.Received(1).Change(config.TurnTimeInMilisec, Timeout.Infinite);
+        }
+
+        [Fact]
+        public async void GIVEN_ReversiLogic_WHEN_Call_Timer_Callback_THEN_Turn_Should_Be_Changed()
+        {
+            // given
+            ReversiLogic reversiLogic = _reversiLogic;
+            Action timerCallback = _timerCallback;
+
+            // when
+            timerCallback();
+
+            // then
+            ReversiGameData gameData = reversiLogic.GetGameData();
+            Assert.Equal(_playerId2, gameData.TurnPlayerId);
         }
     }
 }

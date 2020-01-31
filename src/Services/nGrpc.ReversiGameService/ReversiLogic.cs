@@ -1,37 +1,70 @@
 ﻿using nGrpc.ServerCommon;
+using Nito.AsyncEx;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace nGrpc.ReversiGameService
 {
     public class ReversiLogic
     {
+        private readonly ReversiGameConfigs _reversiGameConfigs;
+        private readonly ITimer _timer;
         private readonly int _playerId1;
         private readonly string _playerName1;
         private readonly int _playerId2;
         private readonly string _playerName2;
-        private readonly ReversiCellColor[,] _cellColors;
+        private readonly ReversiCellColor[,] _cellColors = new ReversiCellColor[8, 8];
         private int _turnPlayerId;
+        private readonly AsyncLock _asyncLock = new AsyncLock();
 
-        public ReversiLogic(int playerId1, string playerName1, int playerId2, string playerName2)
+        public ReversiLogic(
+            ReversiGameConfigs reversiGameConfigs,
+            ITimer timer,
+            int playerId1,
+            string playerName1,
+            int playerId2,
+            string playerName2)
         {
+            _reversiGameConfigs = reversiGameConfigs;
+            _timer = timer;
             _playerId1 = playerId1;
             _playerName1 = playerName1;
             _playerId2 = playerId2;
             _playerName2 = playerName2;
 
-            _cellColors = new ReversiCellColor[8, 8];
+            InitializeGame();
+        }
+
+
+        // private
+
+        private void InitializeGame()
+        {
             _cellColors[3, 3] = ReversiCellColor.White;
             _cellColors[3, 4] = ReversiCellColor.Black;
             _cellColors[4, 3] = ReversiCellColor.Black;
             _cellColors[4, 4] = ReversiCellColor.White;
 
-            _turnPlayerId = playerId1;
+            _turnPlayerId = _playerId1;
+
+            _timer.SetCallback(TimerCallback);
+            ResetTimer();
         }
 
+        private void ResetTimer()
+        {
+            _timer.Change(_reversiGameConfigs.TurnTimeInMilisec, Timeout.Infinite);
+        }
 
-        // private
+        private void TimerCallback()
+        {
+            using(_asyncLock.Lock())
+            {
+                ChangeTurn();
+            }
+        }
 
         private ReversiGameData CreateGameData()
         {
@@ -42,7 +75,7 @@ namespace nGrpc.ReversiGameService
                 PlayerId2 = _playerId2,
                 PlayerName2 = _playerName2,
                 CellColors = _cellColors.CloneByMessagePack(),
-                TurnPlayerId = _playerId1
+                TurnPlayerId = _turnPlayerId
             };
             return gameData;
         }
@@ -58,7 +91,6 @@ namespace nGrpc.ReversiGameService
                 throw new Exception("Empty does not have opposite color.");
             return color == ReversiCellColor.White ? ReversiCellColor.Black : ReversiCellColor.White;
         }
-
 
         private bool CalculateNewMove(ReversiCellColor newDiskColor, int row, int col)
         {
@@ -102,9 +134,10 @@ namespace nGrpc.ReversiGameService
             return b;
         }
 
-        void ChangeTurn()
+        private void ChangeTurn()
         {
             _turnPlayerId = _turnPlayerId == _playerId1 ? _playerId2 : _playerId1;
+            ResetTimer();
         }
 
 
@@ -112,22 +145,26 @@ namespace nGrpc.ReversiGameService
 
         public ReversiGameData GetGameData()
         {
-            return CreateGameData();
+            using (_asyncLock.Lock())
+                return CreateGameData();
         }
 
         public ReversiGameData PutDisk(int playerId, int row, int col)
         {
-            if (playerId != _turnPlayerId)
-                throw new WrongPlayerIdException($"PlayerId:{playerId}, ExpectedPlayerId:{_turnPlayerId}");
+            using (_asyncLock.Lock())
+            {
+                if (playerId != _turnPlayerId)
+                    throw new WrongPlayerIdException($"PlayerId:{playerId}, ExpectedPlayerId:{_turnPlayerId}");
 
-            ReversiCellColor playerColor = GetPlayerColor(playerId);
-            bool b = CalculateNewMove(playerColor, row, col);
-            if (b == false)
-                throw new DiskOnWrongPositionException($"PlayerId:{playerId}, Row:{row}, Col:{col}");
+                ReversiCellColor playerColor = GetPlayerColor(playerId);
+                bool b = CalculateNewMove(playerColor, row, col);
+                if (b == false)
+                    throw new DiskOnWrongPositionException($"PlayerId:{playerId}, Row:{row}, Col:{col}");
 
-            ChangeTurn();
+                ChangeTurn();
 
-            return CreateGameData();
+                return CreateGameData();
+            }
         }
 
     }
