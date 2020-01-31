@@ -9,30 +9,38 @@ namespace nGrpc.ReversiGameService
 {
     public class ReversiGamesManager : IMatchProvider
     {
-        private readonly ITimerProvider _timerProvider;
-        private readonly ReversiGameConfigs _reversiGameConfigs;
-        private readonly ConcurrentDictionary<int, ReversiLogic> _logics = new ConcurrentDictionary<int, ReversiLogic>();
+        private readonly IReversiLogicCreator _reversiLogicCreator;
+        private readonly ConcurrentDictionary<int, IReversiLogic> _logics = new ConcurrentDictionary<int, IReversiLogic>();
         private int _lastId = 0;
 
-        public ReversiGamesManager(
-            ITimerProvider timerProvider,
-            ReversiGameConfigs reversiGameConfigs)
+        public ReversiGamesManager(IReversiLogicCreator reversiLogicCreator)
         {
-            _timerProvider = timerProvider;
-            _reversiGameConfigs = reversiGameConfigs;
+            _reversiLogicCreator = reversiLogicCreator;
         }
+
+
+        // private
+
+        private IReversiLogic GetReversiLogic(int playerId, int matchId)
+        {
+            if (_logics.TryGetValue(matchId, out IReversiLogic reversiLogic) == true)
+                if (reversiLogic.IsPlayerInGame(playerId) == true)
+                    return reversiLogic;
+
+            throw new ThereIsNoSuchGameException($"PlayerId:{playerId}, MatchId:{matchId}");
+        }
+
+
+        //public
 
         public async Task<int> CreateMatch(List<MatchMakePlayer> players)
         {
-            ITimer timer = _timerProvider.CreateTimer();
             int playerId1 = players[0].Id;
             string playerName1 = players[0].Name;
             int playerId2 = players[1].Id;
             string playerName2 = players[1].Name;
 
-            ReversiLogic reversiLogic = new ReversiLogic(
-                _reversiGameConfigs,
-                timer,
+            IReversiLogic reversiLogic = _reversiLogicCreator.CreateLogic(
                 playerId1,
                 playerName1,
                 playerId2,
@@ -47,10 +55,14 @@ namespace nGrpc.ReversiGameService
 
         public ReversiGameData GetGameData(int playerId, int matchId)
         {
-            if (_logics.TryGetValue(matchId, out ReversiLogic reversiLogic) == true)
-                return reversiLogic.GetGameData(playerId);
+            return GetReversiLogic(playerId, matchId).GetGameData(playerId);
+        }
 
-            throw new ThereIsNoSuchGameException($"PlayerId:{playerId}, MatchId:{matchId}");
+        public ReversiGameData PutDisk(int playerId, int matchId, int row, int col)
+        {
+            IReversiLogic reversiLogic = GetReversiLogic(playerId, matchId);
+            ReversiGameData gameData = reversiLogic.PutDisk(playerId, row, col);
+            return gameData;
         }
     }
 }

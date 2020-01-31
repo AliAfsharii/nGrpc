@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace nGrpc.ReversiGameService
 {
-    public class ReversiLogic
+    public class ReversiLogic : IReversiLogic
     {
         private readonly ReversiGameConfigs _reversiGameConfigs;
         private readonly ITimer _timer;
@@ -169,6 +169,11 @@ namespace nGrpc.ReversiGameService
 
                 return CreateGameData();
             }
+        }
+
+        public bool IsPlayerInGame(int playerId)
+        {
+            return playerId == _playerId1 || playerId == _playerId2;
         }
 
     }

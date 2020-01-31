@@ -12,19 +12,28 @@ namespace nGrpc.UnitTests.ReversiGameTests
     public class ReversiGamesManagerTest
     {
         ReversiGamesManager _reversiGamesManager;
+        IReversiLogicCreator _reversiLogicCreator;
+        IReversiLogic _reversiLogic;
+        int _playerId = 87456;
 
         public ReversiGamesManagerTest()
         {
-            ITimerProvider timerProvider = Substitute.For<ITimerProvider>();
-            _reversiGamesManager = new ReversiGamesManager(timerProvider, new ReversiGameConfigs());
+            _reversiLogic = Substitute.For<IReversiLogic>();
+            _reversiLogic.IsPlayerInGame(_playerId).Returns(true);
+
+            _reversiLogicCreator = Substitute.For<IReversiLogicCreator>();
+            _reversiLogicCreator.CreateLogic(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<int>(), Arg.Any<string>()).Returns(_reversiLogic);
+
+            _reversiGamesManager = new ReversiGamesManager(_reversiLogicCreator);
         }
 
 
         [Fact]
-        public async Task GIVEN_ReversiGamesManager_WHEN_Call_CreateMatch_THEN_It_Should_Return_MatchId()
+        public async Task GIVEN_ReversiGamesManager_WHEN_Call_CreateMatch_THEN_ReversiLogicCreator_CreateLogic_Should_Be_Called_Once()
         {
             // given
             ReversiGamesManager reversiGamesManager = _reversiGamesManager;
+            IReversiLogicCreator reversiLogicCreator = _reversiLogicCreator;
 
             // when
             List<MatchMakePlayer> players = new List<MatchMakePlayer>
@@ -35,15 +44,15 @@ namespace nGrpc.UnitTests.ReversiGameTests
             int matchId = await reversiGamesManager.CreateMatch(players);
 
             // then
-            Assert.NotEqual(0, matchId);
+            reversiLogicCreator.Received(1).CreateLogic(players[0].Id, players[0].Name, players[1].Id, players[1].Name);
         }
 
         [Fact]
-        public async Task GIVEN_ReversiGameManager_With_A_CreatedGame_WHEN_Call_GetGameData_By_Given_MatchId_THEN_It_Should_Return_Correct_GameData()
+        public async Task GIVEN_ReversiGameManager_With_A_CreatedGame_WHEN_Call_GetGameData_By_Given_MatchId_THEN_ReversiLogic_GetGameData_Should_Be_Called_Once()
         {
             // given
             ReversiGamesManager reversiGamesManager = _reversiGamesManager;
-            int playerId = 9875634;
+            int playerId = _playerId;
             List<MatchMakePlayer> players = new List<MatchMakePlayer>
             {
                 new MatchMakePlayer{ Id = playerId, Name = "346fdgsd" },
@@ -51,11 +60,16 @@ namespace nGrpc.UnitTests.ReversiGameTests
             };
             int matchId = await reversiGamesManager.CreateMatch(players);
 
+            IReversiLogic reversiLogic = _reversiLogic;
+            ReversiGameData expectedGameData = new ReversiGameData();
+            reversiLogic.GetGameData(_playerId).Returns(expectedGameData);
+
             // when
-            ReversiGameData reversiGameData = reversiGamesManager.GetGameData(playerId, matchId);
+            ReversiGameData gameData = reversiGamesManager.GetGameData(playerId, matchId);
 
             // then
-            Assert.Equal(playerId, reversiGameData.PlayerId1);
+            reversiLogic.Received(1).GetGameData(playerId);
+            Assert.StrictEqual(expectedGameData, gameData);
         }
 
         [Fact]
@@ -63,7 +77,7 @@ namespace nGrpc.UnitTests.ReversiGameTests
         {
             // given
             ReversiGamesManager reversiGamesManager = _reversiGamesManager;
-            int playerId = 9875634;
+            int playerId = _playerId;
             List<MatchMakePlayer> players = new List<MatchMakePlayer>
             {
                 new MatchMakePlayer{ Id = playerId, Name = "346fdgsd" },
@@ -80,25 +94,30 @@ namespace nGrpc.UnitTests.ReversiGameTests
         }
 
         [Fact]
-        public async Task GIVEN_ReversiGameManager_With_A_CreatedGame_WHEN_Call_GetGameData_By_Wrong_PlayerId_THEN_It_Should_Throw_WrongPlayerIdException()
+        public async Task GIVEN_ReversiGamesManager_With_A_CreatedGame_WHEN_Call_PutDisk_THEN_()
         {
             // given
             ReversiGamesManager reversiGamesManager = _reversiGamesManager;
-            int playerId = 9875634;
+            int playerId = _playerId;
             List<MatchMakePlayer> players = new List<MatchMakePlayer>
             {
-                new MatchMakePlayer{ Id = playerId, Name = "346fdgsd" },
-                new MatchMakePlayer{ Id = 34752, Name = "346ghdfhsdfdgsd" }
+                new MatchMakePlayer{ Id = playerId, Name = "hddfg" },
+                new MatchMakePlayer{ Id = 23452, Name = "fsdvcs" }
             };
             int matchId = await reversiGamesManager.CreateMatch(players);
 
+            IReversiLogic reversiLogic = _reversiLogic;
+            int row = 3;
+            int col = 6;
+            ReversiGameData expectedGameData = new ReversiGameData();
+            reversiLogic.PutDisk(playerId, row, col).Returns(expectedGameData);
+
             // when
-            Exception exception = Record.Exception(() => reversiGamesManager.GetGameData(playerId + 1, matchId));
+            ReversiGameData gameData = reversiGamesManager.PutDisk(playerId, matchId, row, col);
 
             // then
-            Assert.NotNull(exception);
-            Assert.IsType<WrongPlayerIdException>(exception);
+            reversiLogic.Received(1).PutDisk(playerId, row, col);
+            Assert.StrictEqual(expectedGameData, gameData);
         }
-
     }
 }
