@@ -15,5 +15,6 @@
         public string PlayerName2 { get; set; }
         public ReversiCellColor[,] CellColors { get; set; }
         public int TurnPlayerId { get; set; }
+        public string ChatRoomName { get; set; }
     }
 }

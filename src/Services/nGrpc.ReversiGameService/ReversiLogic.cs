@@ -16,6 +16,7 @@ namespace nGrpc.ReversiGameService
         private readonly string _playerName1;
         private readonly int _playerId2;
         private readonly string _playerName2;
+        private readonly string _chatRoomName;
         private readonly ReversiCellColor[,] _cellColors = new ReversiCellColor[8, 8];
         private int _turnPlayerId;
         private readonly AsyncLock _asyncLock = new AsyncLock();
@@ -26,7 +27,8 @@ namespace nGrpc.ReversiGameService
             int playerId1,
             string playerName1,
             int playerId2,
-            string playerName2)
+            string playerName2,
+            string chatRoomName)
         {
             _reversiGameConfigs = reversiGameConfigs;
             _timer = timer;
@@ -34,6 +36,7 @@ namespace nGrpc.ReversiGameService
             _playerName1 = playerName1;
             _playerId2 = playerId2;
             _playerName2 = playerName2;
+            _chatRoomName = chatRoomName;
 
             InitializeGame();
         }
@@ -76,7 +79,8 @@ namespace nGrpc.ReversiGameService
                 PlayerId2 = _playerId2,
                 PlayerName2 = _playerName2,
                 CellColors = _cellColors.CloneByMessagePack(),
-                TurnPlayerId = _turnPlayerId
+                TurnPlayerId = _turnPlayerId,
+                ChatRoomName = _chatRoomName
             };
             return gameData;
         }

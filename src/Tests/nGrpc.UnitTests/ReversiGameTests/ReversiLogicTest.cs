@@ -27,7 +27,7 @@ namespace nGrpc.UnitTests.ReversiGameTests
             _timer = Substitute.For<ITimer>();
             _timer.When(x => x.SetCallback(Arg.Any<Action>())).Do(x => _timerCallback = x.ArgAt<Action>(0));
 
-            _reversiLogic = new ReversiLogic(_reversiGameConfigs, _timer, _playerId1, _playerName1, _playerId2, _playerName2);
+            _reversiLogic = new ReversiLogic(_reversiGameConfigs, _timer, _playerId1, _playerName1, _playerId2, _playerName2, "ChatRoomName");
         }
 
         [Fact]
@@ -325,6 +325,19 @@ namespace nGrpc.UnitTests.ReversiGameTests
             // then
             Assert.NotNull(exception);
             Assert.IsType<CellIsFilledException>(exception);
+        }
+
+        [Fact]
+        public void GIVEN_ReversiLogic_WHEN_THEN_()
+        {
+            // given
+            ReversiLogic reversiLogic = _reversiLogic;
+
+            // when
+
+
+            // then
+
         }
     }
 }
