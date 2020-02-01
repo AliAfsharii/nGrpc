@@ -7,3 +7,9 @@ src/Tests/nGrpc.UnitTests/bin/
 src/Tests/nGrpc.UnitTests/obj/
 src/Services/*/bin/
 src/Services/*/obj/
+unity client/Library/
+unity client/Logs/
+unity client/Temp/
+*.csproj
+unity client/Unity.sln
+unity client/.vs/
