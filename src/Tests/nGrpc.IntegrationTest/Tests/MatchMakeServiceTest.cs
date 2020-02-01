@@ -42,5 +42,29 @@ namespace nGrpc.IntegrationTest
 
             Assert.NotNull(res);
         }
+
+        [Fact]
+        public async Task MatchMake_MatchMake_Two_Player_Test()
+        {
+            (GrpcChannel grpcChannel, LoginRes loginRes) = await TestUtils.GetNewLoginedChannel();
+            MatchMakeGrpcService matchMakeGrpcService = new MatchMakeGrpcService(grpcChannel);
+            MatchMakeUpdateEvent receivedEvent = null;
+            matchMakeGrpcService.OnMatchMakeUpdateReceived += mEvent => receivedEvent = mEvent;
+            MatchMakeReq req = new MatchMakeReq();
+            MatchMakeRes res = await matchMakeGrpcService.MatchMakeRPC(req);
+
+            (GrpcChannel grpcChannel1, LoginRes loginRes1) = await TestUtils.GetNewLoginedChannel();
+            MatchMakeGrpcService matchMakeGrpcService1 = new MatchMakeGrpcService(grpcChannel1);
+            MatchMakeReq req1 = new MatchMakeReq();
+            MatchMakeRes res1 = await matchMakeGrpcService1.MatchMakeRPC(req1);
+
+            Assert.NotNull(res);
+            await Task.Delay(50);
+            Assert.NotNull(receivedEvent);
+            Assert.NotNull(receivedEvent.MatchId);
+            Assert.Equal(2, receivedEvent.MatchMakePlayers.Count);
+            Assert.Equal(loginRes.PlayerId, receivedEvent.MatchMakePlayers[0].Id);
+            Assert.Equal(loginRes1.PlayerId, receivedEvent.MatchMakePlayers[1].Id);
+        }
     }
 }

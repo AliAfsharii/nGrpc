@@ -16,16 +16,6 @@ namespace nGrpc.MatchMakeService
             services.AddSingleton<IRoomCreator, RoomCreator>();
             services.AddSingleton<IMatchMaker, MatchMaker>();
             services.AddSingleton<IGrpcService, MatchMakeGrpcService>();
-
-            services.AddSingleton<IMatchProvider, temoMatchProcvider>();
-        }
-
-        public class temoMatchProcvider : IMatchProvider
-        {
-            public async Task<int> CreateMatch(List<MatchMakePlayer> playerIds)
-            {
-                return 11;
-            }
         }
 
         public List<(int priorityIndex, Func<Task> func)> Initializer(IServiceProvider serviceProvider)
