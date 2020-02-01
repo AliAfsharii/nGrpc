@@ -113,12 +113,12 @@ namespace nGrpc.UnitTests.ProfileServiceTests
         }
 
         [Fact]
-        public async Task GIVEN_Profile_WHEN_Call_ChangePlayerCustomData_THEN_Session_ManipulatePlayerData_Should_Be_Called_Once()
+        public async Task GIVEN_Profile_WHEN_Call_ChangeName_THEN_Session_ManipulatePlayerData_Should_Be_Called_Once()
         {
             // given
             IProfile profile = _profile;
             int playerId = 65765;
-            string customData = "player custom data";
+            string newName = "player new Name nndfnskdjf";
 
             ISessionsManager sessionsManager = _sessionsManager;
             PlayerData expectedPlayerData = new PlayerData();
@@ -130,10 +130,10 @@ namespace nGrpc.UnitTests.ProfileServiceTests
                 });
 
             // when
-            PlayerData playerData = await profile.ChangePlayerCustomData(playerId, customData);
+            PlayerData playerData = await profile.ChangeName(playerId, newName);
 
             // then
-            Assert.Equal(customData, expectedPlayerData.CustomData);
+            Assert.Equal(newName, expectedPlayerData.Name);
         }
     }
 }

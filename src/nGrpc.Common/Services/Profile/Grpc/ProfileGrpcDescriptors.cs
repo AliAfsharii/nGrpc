@@ -7,12 +7,12 @@ namespace nGrpc.Common.Descriptors
         public static readonly string ServiceName = "ProfileService";
 
         public static Method<RegisterReq, RegisterRes> RegisterDesc =
-                      GrpcUtils.CreateMethodDescriptor<RegisterReq, RegisterRes>(MethodType.Unary, ServiceName, "Register");
+            GrpcUtils.CreateMethodDescriptor<RegisterReq, RegisterRes>(MethodType.Unary, ServiceName, "Register");
 
         public static Method<LoginReq, LoginRes> LoginDesc =
-             GrpcUtils.CreateMethodDescriptor<LoginReq, LoginRes>(MethodType.Unary, ServiceName, "Login");
+            GrpcUtils.CreateMethodDescriptor<LoginReq, LoginRes>(MethodType.Unary, ServiceName, "Login");
 
-        public static Method<ChangeCustomDataReq, ChangeCustomDataRes> ChangeCustomDataDesc =
-        GrpcUtils.CreateMethodDescriptor<ChangeCustomDataReq, ChangeCustomDataRes>(MethodType.Unary, ServiceName, "ChangeCustomData");
+        public static Method<ChangeNameReq, ChangeNameRes> ChangeNameDesc =
+            GrpcUtils.CreateMethodDescriptor<ChangeNameReq, ChangeNameRes>(MethodType.Unary, ServiceName, "ChangeName");
     }
 }

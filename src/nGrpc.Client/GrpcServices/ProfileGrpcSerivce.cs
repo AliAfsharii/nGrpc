@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace nGrpc.Client.GrpcServices
 {
-    public class ProfileGrpcSerivce 
+    public class ProfileGrpcSerivce
     {
         private readonly GrpcChannel _grpcChannel;
 
@@ -33,9 +33,9 @@ namespace nGrpc.Client.GrpcServices
             return res;
         }
 
-        public async Task<ChangeCustomDataRes> ChangeCustomDataRPC(ChangeCustomDataReq req)
+        public async Task<ChangeNameRes> ChangeNameRPC(ChangeNameReq req)
         {
-            var res = await _grpcChannel.CallRpc(ProfileDescriptors.ChangeCustomDataDesc, req);
+            var res = await _grpcChannel.CallRpc(ProfileDescriptors.ChangeNameDesc, req);
             return res;
         }
     }

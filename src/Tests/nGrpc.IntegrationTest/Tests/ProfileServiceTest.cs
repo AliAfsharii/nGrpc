@@ -42,18 +42,18 @@ namespace nGrpc.IntegrationTest
         }
 
         [Fact]
-        public async Task ChangeCustomDataRPC_Test()
+        public async Task ChangeNameRPC_Test()
         {
             (GrpcChannel grpcChannel, LoginRes loginRes) = await TestUtils.GetNewLoginedChannel();
             ProfileGrpcSerivce profileGrpcSerivce = new ProfileGrpcSerivce(grpcChannel);
 
-            ChangeCustomDataReq req = new ChangeCustomDataReq
+            ChangeNameReq req = new ChangeNameReq
             {
-                CustomData = "jahdsf sg asdoh asoihdfa dfa"
+                NewName = "jahdsf sg asdoh asoihdfa dfa"
             };
-            ChangeCustomDataRes res = await profileGrpcSerivce.ChangeCustomDataRPC(req);
+            ChangeNameRes res = await profileGrpcSerivce.ChangeNameRPC(req);
 
-            Assert.Equal(req.CustomData, res.PlayerData.CustomData);
+            Assert.Equal(req.NewName, res.PlayerData.Name);
         }
     }
 }

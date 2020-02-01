@@ -36,9 +36,9 @@ namespace nGrpc.ProfileService
             return sessionId;
         }
 
-        public async Task<PlayerData> ChangePlayerCustomData(int playerId, string customData)
+        public async Task<PlayerData> ChangeName(int playerId, string newName)
         {
-            PlayerData playerData = await _sessionsManager.ManipulatePlayerData(playerId, p => p.CustomData = customData);
+            PlayerData playerData = await _sessionsManager.ManipulatePlayerData(playerId, async p => p.Name = newName);
             return playerData;
         }
     }

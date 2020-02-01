@@ -173,7 +173,7 @@ namespace nGrpc.UnitTests.SessionTests
         }
 
         [Fact]
-        public async Task GIVEN_SessionsManager_With_A_Session_WHEN_Call_ManipulatePlayerData_And_Change_CustomData_THEN_It_Should_Return_PlayerData_With_New_CustomData()
+        public async Task GIVEN_SessionsManager_With_A_Session_WHEN_Call_ManipulatePlayerData_And_Change_Name_THEN_It_Should_Return_PlayerData_With_New_Name()
         {
             // given
             ISessionsManager sessionsManager = _sessionsManager;
@@ -181,13 +181,13 @@ namespace nGrpc.UnitTests.SessionTests
             int playerId = _playerId;
             PlayerData playerData = _playerData;
             Guid sessionId = sessionsManager.AddSession(playerData);
-            string customData = "custom";
+            string name = "gjgfo ungsdfio gsd";
 
             // when
-            PlayerData pd = await sessionsManager.ManipulatePlayerData(playerId, p => p.CustomData = customData);
+            PlayerData pd = await sessionsManager.ManipulatePlayerData(playerId, p => p.Name = name);
 
             // then
-            Assert.Equal(customData, pd.CustomData);
+            Assert.Equal(name, pd.Name);
             var p = sessionsManager.GetPlayerData(playerId);
             Assert.Equal(p.ToJson(), pd.ToJson());
             Assert.NotStrictEqual(playerData, pd);

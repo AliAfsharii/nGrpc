@@ -8,6 +8,6 @@ namespace nGrpc.ProfileService
     {
         Task<Guid> Login(int playerId, Guid secretKey);
         Task<(int playerId, Guid secretKey)> Register();
-        Task<PlayerData> ChangePlayerCustomData(int playerId, string customData);
+        Task<PlayerData> ChangeName(int playerId, string newName);
     }
 }

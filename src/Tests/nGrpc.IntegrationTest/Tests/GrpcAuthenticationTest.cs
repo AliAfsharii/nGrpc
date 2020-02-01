@@ -16,7 +16,7 @@ namespace nGrpc.IntegrationTest
             GrpcChannel channel = await TestUtils.GetNewChannel();
             ProfileGrpcSerivce profileGrpcSerivce = new ProfileGrpcSerivce(channel);
 
-            Exception exception = await Record.ExceptionAsync(() => profileGrpcSerivce.ChangeCustomDataRPC(new ChangeCustomDataReq { CustomData = "asdfa" }));
+            Exception exception = await Record.ExceptionAsync(() => profileGrpcSerivce.ChangeNameRPC(new ChangeNameReq { NewName = "New Player Name" }));
 
             Assert.NotNull(exception);
             Assert.IsType<RpcException>(exception);

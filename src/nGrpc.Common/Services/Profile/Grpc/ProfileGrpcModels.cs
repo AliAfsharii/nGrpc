@@ -22,11 +22,11 @@ namespace nGrpc.Common
         public Guid SessionId { get; set; }
     }
 
-    public class ChangeCustomDataReq
+    public class ChangeNameReq
     {
-        public string CustomData { get; set; }
+        public string NewName { get; set; }
     }
-    public class ChangeCustomDataRes
+    public class ChangeNameRes
     {
         public PlayerData PlayerData { get; set; }
     }
