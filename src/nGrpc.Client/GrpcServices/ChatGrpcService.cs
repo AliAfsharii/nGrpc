@@ -28,21 +28,9 @@ namespace nGrpc.Client.GrpcServices
         }
 
 
-        public async Task<JoinRoomRes> JoinRoomRPC(JoinRoomReq req)
-        {
-            var res = await _grpcChannel.CallRpc(ChatGrpcDescriptors.JoinRoomDesc, req);
-            return res;
-        }
-
         public async Task<SendChatRes> SendChatRPC(SendChatReq req)
         {
             var res = await _grpcChannel.CallRpc(ChatGrpcDescriptors.SendChatDesc, req);
-            return res;
-        }
-
-        public async Task<LeaveRoomRes> LeaveRoomRPC(LeaveRoomReq req)
-        {
-            var res = await _grpcChannel.CallRpc(ChatGrpcDescriptors.LeaveRoomDesc, req);
             return res;
         }
 

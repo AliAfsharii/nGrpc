@@ -1,6 +1,7 @@
 ﻿using nGrpc.Client;
 using nGrpc.Client.GrpcServices;
 using nGrpc.Common;
+using nGrpc.ServerCommon;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,27 +12,13 @@ namespace nGrpc.IntegrationTest
     public class ChatServiceTest : IntegrationTestBase
     {
         [Fact]
-        public async Task Chat_JoinRoom_Test()
-        {
-            (GrpcChannel grpcChannel, LoginRes loginRes) = await TestUtils.GetNewLoginedChannel();
-            ChatGrpcService chatGrpcService = new ChatGrpcService(grpcChannel);
-
-            JoinRoomReq req = new JoinRoomReq
-            {
-                RoomName = "adfasdfhds"
-            };
-            JoinRoomRes res = await chatGrpcService.JoinRoomRPC(req);
-
-            Assert.NotNull(res);
-        }
-
-        [Fact]
         public async Task Chat_SendChat_Test()
         {
             (GrpcChannel grpcChannel, LoginRes loginRes) = await TestUtils.GetNewLoginedChannel();
             ChatGrpcService chatGrpcService = new ChatGrpcService(grpcChannel);
             string roomName = "fdgasdg";
-            await chatGrpcService.JoinRoomRPC(new JoinRoomReq { RoomName = roomName });
+            var chatHub = GetServiceFromProvider<IChatHub>();
+            chatHub.JoinRoom(loginRes.PlayerId, roomName);
 
             ChatMessage receivedChatMessage = null;
             chatGrpcService.OnChatReceived += chatMessage => receivedChatMessage = chatMessage;
@@ -57,9 +44,7 @@ namespace nGrpc.IntegrationTest
             (GrpcChannel grpcChannel, LoginRes loginRes) = await TestUtils.GetNewLoginedChannel();
             ChatGrpcService chatGrpcService = new ChatGrpcService(grpcChannel);
             string roomName = "fgsdfakudyk";
-            await chatGrpcService.JoinRoomRPC(new JoinRoomReq { RoomName = roomName });
 
-            await chatGrpcService.LeaveRoomRPC(new LeaveRoomReq { RoomName = roomName });
             SendChatReq req = new SendChatReq
             {
                 RoomName = roomName,
@@ -77,8 +62,10 @@ namespace nGrpc.IntegrationTest
             ChatGrpcService chatGrpcService = new ChatGrpcService(grpcChannel);
             string roomName = "mnbzxcgvuas";
             string chatText = "uidyfisdfnasdhguiu";
-            await chatGrpcService.JoinRoomRPC(new JoinRoomReq { RoomName = roomName });
+            var chatHub = GetServiceFromProvider<IChatHub>();
+            chatHub.JoinRoom(loginRes.PlayerId, roomName);
 
+            //var chat
             var chatConfig = GetServiceFromProvider<ChatService.ChatConfigs>();
 
             for (int i = 0; i < chatConfig.ChatGetLastChatsCount + 5; i++)

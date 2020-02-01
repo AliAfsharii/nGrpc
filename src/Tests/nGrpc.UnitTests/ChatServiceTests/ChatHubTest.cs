@@ -26,9 +26,13 @@ namespace nGrpc.UnitTests.ChatServiceTests
         {
             _pubSubHub = Substitute.For<IPubSubHub>();
             _time = Substitute.For<ITime>();
+
             _chatRepository = Substitute.For<IChatRepository>();
             _chatRepository.GetLastChatMessages(Arg.Any<string>(), Arg.Any<int>()).Returns(x => new List<ChatMessage>());
-            ChatRoom chatRoomFactory(string roomName) => CreateChatRoom(roomName);
+
+            IChatRoomFactory chatRoomFactory = Substitute.For<IChatRoomFactory>();
+            chatRoomFactory.CreateNewChatRoom(Arg.Any<string>()).Returns(x => CreateChatRoom(x.ArgAt<string>(0)));
+
             _chatHub = new ChatHub(chatRoomFactory);
         }
 

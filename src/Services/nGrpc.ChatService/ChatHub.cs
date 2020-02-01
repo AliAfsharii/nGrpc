@@ -1,4 +1,5 @@
 ﻿using nGrpc.Common;
+using nGrpc.ServerCommon;
 using Nito.AsyncEx;
 using System;
 using System.Collections.Concurrent;
@@ -6,11 +7,11 @@ using System.Collections.Generic;
 
 namespace nGrpc.ChatService
 {
-    public partial class ChatHub
+    public partial class ChatHub : IChatHub
     {
-        private readonly Func<string, ChatRoom> _chatRoomFactory;
+        private readonly IChatRoomFactory _chatRoomFactory;
 
-        public ChatHub(Func<string, ChatRoom> chatRoomFactory)
+        public ChatHub(IChatRoomFactory chatRoomFactory)
         {
             _chatRoomFactory = chatRoomFactory;
         }
@@ -30,7 +31,7 @@ namespace nGrpc.ChatService
                 {
                     if (_roomNameToRoomClass.TryGetValue(roomName, out chatRoom) == false)
                     {
-                        chatRoom = _chatRoomFactory(roomName);
+                        chatRoom = _chatRoomFactory.CreateNewChatRoom(roomName);
                         _roomNameToRoomClass.TryAdd(roomName, chatRoom);
                     }
                 }
@@ -60,7 +61,7 @@ namespace nGrpc.ChatService
 
         public void LeaveRoom(int playerId, string roomName)
         {
-            ChatRoom chatRoom = GetOrAddChatRoom(roomName);
+            ChatRoom chatRoom = GetChatRoom(playerId, roomName);
             chatRoom.RemovePlayer(playerId);
         }
 

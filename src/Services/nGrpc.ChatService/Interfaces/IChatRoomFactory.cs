@@ -1,7 +1,7 @@
-﻿namespace nGrpc.ChatService.Interfaces
+﻿namespace nGrpc.ChatService
 {
     public interface IChatRoomFactory
     {
-        ChatRoom CreateNewChatRoom();
+        ChatRoom CreateNewChatRoom(string roomName);
     }
 }
