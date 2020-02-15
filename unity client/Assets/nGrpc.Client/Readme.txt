@@ -1,0 +1,1 @@
+rebuild solution and put all contents in path nGrpc\src\nGrpc.Client\bin\Debug\netstandard2.0 to this folder.

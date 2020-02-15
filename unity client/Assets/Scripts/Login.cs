@@ -43,7 +43,10 @@ public class Login : MonoBehaviour
     private async Task CreateProfileService()
     {
         if (_profileGrpcSerivce == null)
-            _profileGrpcSerivce = new ProfileGrpcSerivce(await ChannelProvider.Instance.GetChannel());
+        {
+            await ChannelProvider.Instance.ChannelConnect();
+            _profileGrpcSerivce = new ProfileGrpcSerivce(ChannelProvider.Instance.GrpcChannel);
+        }
     }
 
     public async void Event_RegisterButton()

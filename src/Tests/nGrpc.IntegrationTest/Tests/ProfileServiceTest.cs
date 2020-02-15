@@ -55,5 +55,17 @@ namespace nGrpc.IntegrationTest
 
             Assert.Equal(req.NewName, res.PlayerData.Name);
         }
+
+        [Fact]
+        public async Task GetPlayerDataRPC_Test()
+        {
+            (GrpcChannel grpcChannel, LoginRes loginRes) = await TestUtils.GetNewLoginedChannel();
+            ProfileGrpcSerivce profileGrpcSerivce = new ProfileGrpcSerivce(grpcChannel);
+
+            GetPlayerDataReq req = new GetPlayerDataReq();
+            GetPlayerDataRes res = await profileGrpcSerivce.GetPlayerDataRPC(req);
+
+            Assert.Equal(loginRes.PlayerId, res.PlayerData.Id);
+        }
     }
 }

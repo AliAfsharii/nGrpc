@@ -1,5 +1,6 @@
 ﻿using nGrpc.Common;
 using nGrpc.Common.Descriptors;
+using System;
 using System.Threading.Tasks;
 
 namespace nGrpc.Client.GrpcServices
@@ -36,6 +37,12 @@ namespace nGrpc.Client.GrpcServices
         public async Task<ChangeNameRes> ChangeNameRPC(ChangeNameReq req)
         {
             var res = await _grpcChannel.CallRpc(ProfileDescriptors.ChangeNameDesc, req);
+            return res;
+        }
+
+        public async Task<GetPlayerDataRes> GetPlayerDataRPC(GetPlayerDataReq req)
+        {
+            var res = await _grpcChannel.CallRpc(ProfileDescriptors.GetPlayerDataDesc, req);
             return res;
         }
     }

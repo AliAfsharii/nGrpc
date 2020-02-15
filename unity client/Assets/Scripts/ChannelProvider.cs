@@ -1,6 +1,4 @@
 ﻿using nGrpc.Client;
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -12,7 +10,7 @@ public class ChannelProvider : MonoBehaviour
     string Host;
     [SerializeField]
     int Port;
-    GrpcChannel _grpcChannel;
+    public GrpcChannel GrpcChannel { get; } = new GrpcChannel();
 
     void Awake()
     {
@@ -20,13 +18,8 @@ public class ChannelProvider : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public async Task<GrpcChannel> GetChannel()
+    public async Task ChannelConnect()
     {
-        if (_grpcChannel == null)
-        {
-            _grpcChannel = new GrpcChannel();
-            await _grpcChannel.Connect(Host, Port);
-        }
-        return _grpcChannel;
+        await GrpcChannel.Connect(Host, Port);
     }
 }

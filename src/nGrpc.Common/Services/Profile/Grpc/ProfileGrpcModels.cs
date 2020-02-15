@@ -30,4 +30,13 @@ namespace nGrpc.Common
     {
         public PlayerData PlayerData { get; set; }
     }
+
+    public class GetPlayerDataReq
+    {
+
+    }
+    public class GetPlayerDataRes
+    {
+        public PlayerData PlayerData { get; set; }
+    }
 }

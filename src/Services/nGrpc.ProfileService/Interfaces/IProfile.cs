@@ -9,5 +9,6 @@ namespace nGrpc.ProfileService
         Task<Guid> Login(int playerId, Guid secretKey);
         Task<(int playerId, Guid secretKey)> Register();
         Task<PlayerData> ChangeName(int playerId, string newName);
+        Task<PlayerData> GetPlayerData(int playerId);
     }
 }

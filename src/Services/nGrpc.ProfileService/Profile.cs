@@ -41,5 +41,10 @@ namespace nGrpc.ProfileService
             PlayerData playerData = await _sessionsManager.ManipulatePlayerData(playerId, async p => p.Name = newName);
             return playerData;
         }
+
+        public async Task<PlayerData> GetPlayerData(int playerId)
+        {
+            return _sessionsManager.GetPlayerData(playerId);
+        }
     }
 }

@@ -135,5 +135,23 @@ namespace nGrpc.UnitTests.ProfileServiceTests
             // then
             Assert.Equal(newName, expectedPlayerData.Name);
         }
+
+        [Fact]
+        public async Task GIVEN_Profile_WHEN_Call_GetPlayerData_THEN_SessionManager_GetPlayerData_Be_Called_Once()
+        {
+            // given
+            IProfile profile = _profile;
+            int playerId = 34634;
+            ISessionsManager sessionsManager = _sessionsManager;
+            PlayerData expectedPlayerData = new PlayerData();
+            sessionsManager.GetPlayerData(playerId).Returns(expectedPlayerData);
+
+            // when
+            PlayerData playerData = await profile.GetPlayerData(playerId);
+
+            // then
+            sessionsManager.Received(1).GetPlayerData(playerId);
+            Assert.StrictEqual(expectedPlayerData, playerData);
+        }
     }
 }

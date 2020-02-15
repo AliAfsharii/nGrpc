@@ -14,5 +14,8 @@ namespace nGrpc.Common.Descriptors
 
         public static Method<ChangeNameReq, ChangeNameRes> ChangeNameDesc =
             GrpcUtils.CreateMethodDescriptor<ChangeNameReq, ChangeNameRes>(MethodType.Unary, ServiceName, "ChangeName");
+
+        public static Method<GetPlayerDataReq, GetPlayerDataRes> GetPlayerDataDesc =
+           GrpcUtils.CreateMethodDescriptor<GetPlayerDataReq, GetPlayerDataRes>(MethodType.Unary, ServiceName, "GetPlayerData");
     }
 }

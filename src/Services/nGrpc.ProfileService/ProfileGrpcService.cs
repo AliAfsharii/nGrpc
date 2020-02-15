@@ -25,6 +25,7 @@ namespace nGrpc.ProfileService
             grpcBuilder.AddMethod(ProfileDescriptors.RegisterDesc, RegisterRPC);
             grpcBuilder.AddMethod(ProfileDescriptors.LoginDesc, LoginRPC);
             grpcBuilder.AddMethod(ProfileDescriptors.ChangeNameDesc, ChangeNameRPC);
+            grpcBuilder.AddMethod(ProfileDescriptors.GetPlayerDataDesc, GetPlayerDataRPC);
         }
 
         public async Task<RegisterRes> RegisterRPC(RegisterReq req, ServerCallContext context)
@@ -64,9 +65,22 @@ namespace nGrpc.ProfileService
             string newName = req.NewName;
 
             PlayerData playerData = await _profile.ChangeName(playerId, newName);
-            _logger.LogInformation($"ChangeNameRPC, PlayerId:{playerId}, NewName:{newName}");
+            _logger.LogInformation("ChangeNameRPC, PlayerId:{pi}, NewName:{nm}", playerId, newName);
 
             return new ChangeNameRes
+            {
+                PlayerData = playerData
+            };
+        }
+
+        public async Task<GetPlayerDataRes> GetPlayerDataRPC(GetPlayerDataReq req, ServerCallContext context)
+        {
+            int playerId = context.GetPlayerCredential().PlayerId;
+
+            PlayerData playerData = await _profile.GetPlayerData(playerId);
+            _logger.LogInformation("GetPlayerDataRPC, PlayerId:{pi}", playerId);
+
+            return new GetPlayerDataRes
             {
                 PlayerData = playerData
             };
