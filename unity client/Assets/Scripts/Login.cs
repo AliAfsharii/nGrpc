@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using nGrpc.Client;
 using nGrpc.Common;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Login : MonoBehaviour
 {
@@ -69,5 +70,7 @@ public class Login : MonoBehaviour
         };
         LoginRes res = await _profileGrpcSerivce.LoginRPC(req);
         Debug.Log($"Login Done. PlayerId:{req.PlayerId}");
+
+        SceneManager.LoadScene("MenuScene");
     }
 }

@@ -18,6 +18,11 @@ public class ChannelProvider : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+    async void OnDestroy()
+    {
+        await GrpcChannel.Disconnect();
+    }
+
     public async Task ChannelConnect()
     {
         await GrpcChannel.Connect(Host, Port);
