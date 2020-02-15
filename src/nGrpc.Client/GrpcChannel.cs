@@ -26,7 +26,7 @@ namespace nGrpc.Client
         {
         }
 
-        public async Task Connect(string host, int port, bool enableTLS = false)
+        public async Task Connect(string host, int port)
         {
             Host = host;
             Port = port;

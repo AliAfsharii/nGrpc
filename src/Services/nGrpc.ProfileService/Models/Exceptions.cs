@@ -12,4 +12,15 @@ namespace nGrpc.ProfileService
         {
         }
     }
+
+    public class PlayerHasAlreadyLoginedException : Exception
+    {
+        public PlayerHasAlreadyLoginedException()
+        {
+        }
+
+        public PlayerHasAlreadyLoginedException(string message) : base(message)
+        {
+        }
+    }
 }

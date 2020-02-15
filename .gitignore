@@ -13,3 +13,5 @@ unity client/Temp/
 *.csproj
 unity client/Unity.sln
 unity client/.vs/
+unity client/obj/
+unity client/Assets/nGrpc.Client/

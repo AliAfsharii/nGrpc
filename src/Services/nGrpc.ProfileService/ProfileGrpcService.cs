@@ -41,6 +41,10 @@ namespace nGrpc.ProfileService
 
         public async Task<LoginRes> LoginRPC(LoginReq req, ServerCallContext context)
         {
+            int? pi = context.GetPlayerCredential()?.PlayerId;
+            if (pi != null)
+                throw new PlayerHasAlreadyLoginedException($"PlayerId:{pi.Value}");
+
             int playerId = req.PlayerId;
             Guid secretKey = req.SecretKey;
 
