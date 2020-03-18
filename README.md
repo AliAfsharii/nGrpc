@@ -1,8 +1,15 @@
-nGrpc is a sample game server using gRpc but in a different way. This server is ideal to be used with unity3d clients.
-This repository is outcome of multiple game server project which I have done with gRpc and unity3d.
+# nGrpc
+nGrpc is a sample game server written with c# and .Net Core 3. This project is outcome of multiple online game projects which I have done with gRpc and unity3d.  
+
+### nGrpc is using:
+* grpc
+* C#
+* Postgresql
+* .Net Core 3
+
 This repository is good for developers who want to learn about these topics:
-  1- gRpc
-  2- modular architecture
-  3- test driven development (TDD)
-  4- writing unit tests and integration tests and mocking
-  5- inversion of control using dependency injection
+  * gRpc
+  * modular architecture
+  * test driven development (TDD)
+  * writing unit tests and integration tests and mocking
+  * inversion of control using dependency injection
